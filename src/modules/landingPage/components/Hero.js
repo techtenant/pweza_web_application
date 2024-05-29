@@ -75,7 +75,7 @@ export default function Hero() {
               fontSize: 'clamp(3rem, 10vw, 3.5rem)',
             }}
           >
-            Our&nbsp;latest&nbsp;
+            Your Reliable&nbsp;Delivery&nbsp;
             <Typography
               component="span"
               variant="h1"
@@ -85,7 +85,7 @@ export default function Hero() {
                   theme.palette.mode === 'light' ? 'primary.main' : 'primary.light',
               }}
             >
-              products
+              Solution
             </Typography>
           </Typography>
           <Typography
@@ -93,9 +93,9 @@ export default function Hero() {
             color="text.secondary"
             sx={{ width: { sm: '100%', md: '80%' } }}
           >
-            Explore our cutting-edge dashboard, delivering high-quality solutions
-            tailored to your needs. Elevate your experience with top-tier features
-            and services.
+            Whether you are managing a single delivery or an entire fleet, 
+            Pweza has you covered with a suite of robust features tailored
+             to meet all your delivery needs.
           </Typography>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}

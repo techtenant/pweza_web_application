@@ -56,6 +56,21 @@ export const orange = {
   1: '#FF4000',
 };
 
+export const trial = {
+  50: 'hsl(16, 100%, 97%)',
+  100: 'hsl(16, 100%, 90%)',
+  200: 'hsl(16, 100%, 80%)',
+  300: 'hsl(16, 100%, 65%)',
+  400: 'hsl(16, 100%, 50%)',
+  500: 'hsl(16, 100%, 42%)',
+  600: 'hsl(16, 100%, 35%)',
+  650: 'hsl(16, 100%, 30%)',
+  700: 'hsl(16, 100%, 25%)',
+  800: 'hsl(16, 100%, 20%)',
+  900: 'hsl(16, 100%, 15%)',
+  1: '#FF4000',
+};
+
 export const red = {
   50: 'hsl(0, 100%, 97%)',
   100: 'hsl(0, 92%, 90%)',
@@ -74,7 +89,7 @@ const getDesignTokens = (mode) => ({
     mode,
     primary: {
       light: orange[200],
-      main: orange[300],
+      main: trial[300],
       dark: orange[800],
       contrastText: orange[50],
       ...(mode === 'dark' && {
