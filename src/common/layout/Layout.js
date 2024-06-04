@@ -93,6 +93,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
       whiteSpace: 'nowrap',
       backgroundColor: '#121212', // Dark background color
       color: '#fff', // Text color for the items
+      height: '100vh',
       ...openedMixin(theme),
       ...(!open && {
         ...closedMixin(theme),
@@ -101,11 +102,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
 
 const defaultTheme = createTheme();
 
@@ -118,7 +114,7 @@ function Layout({ children }) {
   };
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={defaultTheme}>
       <Grid sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={!open} sx={{
@@ -146,7 +142,7 @@ function Layout({ children }) {
           >
             <MenuIcon />
           </IconButton>
-          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '100px' }} />
+          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '70px' }} />
         
           <AccountPopover />
         </Toolbar>
@@ -160,7 +156,7 @@ function Layout({ children }) {
               px: [1],
             }}
           >
-            <IconButton onClick={toggleDrawer}>
+            <IconButton sx={{color: "#fff"}} onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
@@ -171,16 +167,16 @@ function Layout({ children }) {
             {secondaryListItems}
           </List>
         </Drawer>
-      
+       
         <Grid container spacing={3} sx={{ mt: 2, display: 'flex' ,flexGrow: 1, p: 3 }} >
           {children}
         </Grid>
-        
+     
       </Grid>
       <Box
         sx={{
 
-          marginTop: "auto",
+        
           p: 4,
         }}
       >

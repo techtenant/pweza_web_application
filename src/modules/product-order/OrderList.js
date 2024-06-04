@@ -8,6 +8,8 @@ import {
 import {
     Box,
     Button,
+    ThemeProvider,
+    createTheme,
     DialogActions,
     DialogContent,
     DialogTitle,
@@ -26,8 +28,12 @@ import { fakeData, usStates } from './makeData';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+
+const defaultTheme = createTheme();
+
 const ProductOrders = () => {
     const [validationErrors, setValidationErrors] = useState({});
+   
 
     const columns = useMemo(
         () => [
@@ -317,6 +323,7 @@ function useDeleteUser() {
 const queryClient = new QueryClient();
 
 const OrderList = () => (
+    <ThemeProvider theme={defaultTheme}>
     <QueryClientProvider client={queryClient}>
         <Grid container alignItems="stretch">
             <Grid item md={12} style={{ display: "flex", marginTop: "50px", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
@@ -324,6 +331,7 @@ const OrderList = () => (
             </Grid>
         </Grid>
     </QueryClientProvider>
+    </ThemeProvider>
 );
 
 export default OrderList;

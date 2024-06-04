@@ -10,6 +10,7 @@ import Dashboard from './modules/dashboard/Dashboard';
 import ProductOrders from './modules/product-order/OrderList';
 import Checkout from './modules/delivery/Checkout';
 import UserAccount from './modules/account/AccountPage';
+import FeedBackPage from './modules/feedback/FeedBackPage';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                   <Route path="orders" element={<ProductOrders />} />
                   <Route path="delivery" element={<Checkout />} />
                   <Route path="account" element={<UserAccount />} />
+                  <Route path="feedback" element={<FeedBackPage />} />
                   
                 </Routes>
               </Layout>
