@@ -130,7 +130,11 @@ function AppAppBar({ mode, toggleColorMode }) {
               alignItems: 'center',
             }}
           >
-            {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
+          <Link to="/pweza/dashboard">
+            <Button color="primary" variant="text" size="small">
+              DashBoard
+            </Button>
+            </Link>
             <Link to="/sign-in">
               <Button color="primary" variant="text" size="small">
                 Sign in
