@@ -146,15 +146,8 @@ function Layout({ children }) {
           >
             <MenuIcon />
           </IconButton>
-          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '50px' }} />
-          <Typography
-            component="h1"
-            variant="h6"
-            noWrap
-            sx={{ flexGrow: 1, textAlign: 'center' }}
-          >
-            PWEZA
-          </Typography>
+          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '100px' }} />
+        
           <AccountPopover />
         </Toolbar>
       </AppBar>

@@ -78,7 +78,7 @@ function AppAppBar({ mode, toggleColorMode }) {
               px: 0,
             }}
           >
-            {/* <Sitemark /> */}
+              <img src="/PWEZA.png" alt="Logo" style={{ height: 90, marginRight: 10  }} />
             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
               <Button
                 variant="text"
