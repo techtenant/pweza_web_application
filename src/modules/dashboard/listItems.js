@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Link } from 'react-router-dom';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -8,17 +9,18 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
+import SettingsIcon from '@mui/icons-material/Settings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
+     <ListItemButton component={Link} to="/pweza/dashboard">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/pweza/orders">
       <ListItemIcon>
         <ShoppingCartIcon />
       </ListItemIcon>
@@ -30,7 +32,8 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Payments" />
     </ListItemButton>
-    <ListItemButton>
+    
+    <ListItemButton component={Link} to="/pweza/delivery">
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
@@ -50,6 +53,12 @@ export const secondaryListItems = (
     <ListSubheader component="div" inset>
       Saved reports
     </ListSubheader>
+    <ListItemButton component={Link} to="/pweza/account">
+      <ListItemIcon>
+        <SettingsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Account" />
+    </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <AssignmentIcon />

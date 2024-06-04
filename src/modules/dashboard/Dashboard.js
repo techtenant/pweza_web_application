@@ -138,23 +138,20 @@ export default function Dashboard() {
     setOpen(!open);
   };
 
-  console.log("dashboarde orders",latestOrdersData);
+  console.log("dashboarde orders", latestOrdersData);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container alignItems="stretch">
         <CssBaseline />
-
         <Toolbar />
         <Grid item md={12} style={{ display: "flex", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
           <Grid container spacing={3}>
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
-      {cardsData.map((card, index) => (
-        <Deposits key={index} {...card} sx={{ flexGrow: 1, minWidth: '100%', maxWidth: '100%' }} /> // Adjusted styles for card
-      ))}
-    </Grid>
-
-
-            <Grid item  xs={12} md={8} lg={9}>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
+              {cardsData.map((card, index) => (
+                <Deposits key={index} {...card} sx={{ flexGrow: 1, minWidth: '100%', maxWidth: '100%' }} /> // Adjusted styles for card
+              ))}
+            </Grid>
+            <Grid item xs={12} md={8} lg={9}>
               <Paper
                 sx={{
                   p: 2,
@@ -166,8 +163,6 @@ export default function Dashboard() {
                 <Chart data={salesData} />
               </Paper>
             </Grid>
-
-
             <Grid item xs={12} md={4} lg={3}>
               <Paper
                 sx={{
@@ -180,8 +175,6 @@ export default function Dashboard() {
                 <PieChart data={pieChartData} />
               </Paper>
             </Grid>
-
-
             <Grid item xs={12} md={6}>
               <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                 {latestProductsData && latestProductsData.length > 0 ? (
@@ -193,16 +186,15 @@ export default function Dashboard() {
             </Grid>
             <Grid item xs={12} md={6}>
               <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-              {latestOrdersData && latestOrdersData.length > 0 ? (
-                <LatestOrders title="Latest Orders" orders={latestOrdersData} />
-              ) : (
-                <Typography variant="body1">No products available.</Typography>
-              )}
+                {latestOrdersData && latestOrdersData.length > 0 ? (
+                  <LatestOrders title="Latest Orders" orders={latestOrdersData} />
+                ) : (
+                  <Typography variant="body1">No products available.</Typography>
+                )}
               </Paper>
             </Grid>
           </Grid>
         </Grid>
-
       </Grid>
     </ThemeProvider>
   );

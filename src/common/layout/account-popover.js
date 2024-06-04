@@ -1,34 +1,51 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-import Box from '@mui/material/Box';
+import {Box,MenuList,ListItemIcon} from '@mui/material';
+import PortraitIcon from '@mui/icons-material/Portrait';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Popover from '@mui/material/Popover';
-import { alpha } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
-
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.primary.light, 0.1),
+  },
+  '& .MuiListItemIcon-root': {
+    minWidth: 'auto',
+    marginRight: theme.spacing(2),
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '1.2rem',
+  },
+}));
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
-
   const navigate = useNavigate();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
-  const handleLogout =() => {
-  
+  const handleLogout = () => {
     navigate(`/sign-in`);
-  }
+  };
+
+  const handleSettings = () => {
+    // Navigate to account settings page
+    navigate(`/pweza/account`);
+  };
 
   const handleClose = () => {
     setOpen(null);
-  };  
+  };
 
   return (
     <>
@@ -46,51 +63,44 @@ export default function AccountPopover() {
       >
         <Avatar
           src=""
-         
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
-        >
-        
-        </Avatar>
+        />
       </IconButton>
-
       <Popover
-        open={!!open}
-        anchorEl={open}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            p: 0,
-            mt: 1,
-            ml: 0.75,
-            width: 200,
-          },
-        }}
-      >
-        <Box sx={{ my: 1.5, px: 2 }}>
-          <Typography variant="subtitle2" noWrap>
-           admin@gmail.com
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-           Admin
-          </Typography>
-        </Box>  
-        <Divider sx={{ borderStyle: 'dashed', m: 0 }} />
+      anchorEl={open}
+      anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+      onClose={handleClose}
+      open={open}
+      slotProps={{ paper: { sx: { width: '240px' } } }}
+    >
+      <Box sx={{ p: '16px 20px ' }}>
+        <Typography variant="subtitle1">Sofia Rivers</Typography>
+        <Typography color="text.secondary" variant="body2">
+          sofia.rivers@devias.io
+        </Typography>
+      </Box>
+      <Divider />
+      <MenuList disablePadding sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}>
 
-        <MenuItem
-          disableRipple
-          disableTouchRipple
-          onClick={handleLogout}
-          sx={{ typography: 'body2', color: 'error.main', py: 1.5 }}
-        >
-          Logout
+        <MenuItem onClick={handleSettings}>
+          <ListItemIcon>
+            <PortraitIcon fontSize="var(--icon-fontSize-md)" />
+          </ListItemIcon>
+          Profile
         </MenuItem>
-      </Popover>
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="var(--icon-fontSize-md)" />
+          </ListItemIcon>
+          Sign out
+        </MenuItem>
+      </MenuList>
+    </Popover>
+    
     </>
   );
 }

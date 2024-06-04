@@ -146,7 +146,7 @@ function Layout({ children }) {
           >
             <MenuIcon />
           </IconButton>
-          <img src="/logo192.png" alt="PWEZA Logo" style={{ height: '50px' }} />
+          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '50px' }} />
           <Typography
             component="h1"
             variant="h6"

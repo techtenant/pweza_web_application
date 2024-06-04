@@ -7,7 +7,9 @@ import SignIn from './modules/sign-in/SignIn';
 import LandingPage from './modules/landingPage/LandingPage';
 import Layout from './common/layout/Layout';
 import Dashboard from './modules/dashboard/Dashboard';
-
+import ProductOrders from './modules/product-order/OrderList';
+import Checkout from './modules/delivery/Checkout';
+import UserAccount from './modules/account/AccountPage';
 
 
 function App() {
@@ -22,6 +24,9 @@ function App() {
               <Layout>
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="orders" element={<ProductOrders />} />
+                  <Route path="delivery" element={<Checkout />} />
+                  <Route path="account" element={<UserAccount />} />
                   
                 </Routes>
               </Layout>
