@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -16,6 +17,8 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { InputAdornment,IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -108,11 +111,17 @@ export default function SignUp() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [nameError, setNameError] = React.useState(false);
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
+  const [phoneError, setPhoneError] = React.useState(false);
+  const [phoneErrorMessage, setPhoneErrorMessage] = React.useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateInputs = () => {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
     const name = document.getElementById('name');
+    const phoneNumber = document.getElementById('phone');
 
     let isValid = true;
 
@@ -143,6 +152,15 @@ export default function SignUp() {
       setNameErrorMessage('');
     }
 
+    if (!phoneNumber.value || phoneNumber.value.length < 1) {
+      setPhoneError(true);
+      setPhoneErrorMessage('Phone Number is required.');
+      isValid = false;
+    } else {
+      setPhoneError(false);
+      setPhoneErrorMessage('');
+    }
+
     return isValid;
   };
 
@@ -163,6 +181,14 @@ export default function SignUp() {
       email: data.get('email'),
       password: data.get('password'),
     });
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -220,6 +246,20 @@ export default function SignUp() {
                 />
               </FormControl>
               <FormControl>
+                <FormLabel htmlFor="name">Phone Number</FormLabel>
+                <TextField
+                  autoComplete="phone"
+                  name="phone"
+                  required
+                  fullWidth
+                  id="phone"
+                  placeholder="07 ******"
+                  error={nameError}
+                  helperText={nameErrorMessage}
+                  color={nameError ? 'error' : 'primary'}
+                />
+              </FormControl>
+              <FormControl>
                 <FormLabel htmlFor="email">Email</FormLabel>
                 <TextField
                   required
@@ -241,13 +281,27 @@ export default function SignUp() {
                   fullWidth
                   name="password"
                   placeholder="••••••"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   autoComplete="new-password"
                   variant="outlined"
                   error={passwordError}
                   helperText={passwordErrorMessage}
                   color={passwordError ? 'error' : 'primary'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </FormControl>
               <FormControlLabel
@@ -258,7 +312,11 @@ export default function SignUp() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={validateInputs}
+                onClick={() =>
+                  navigate(
+                    `/pweza/dashboard`
+                  )
+                }
               >
                 Sign up
               </Button>

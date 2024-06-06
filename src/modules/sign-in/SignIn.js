@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -16,9 +17,10 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { Card as MuiCard } from '@mui/material';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import { InputAdornment,IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
@@ -108,6 +110,8 @@ export default function SignIn() {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -161,6 +165,14 @@ export default function SignIn() {
     return isValid;
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  
   return (
     <ThemeProvider theme={showCustomTheme ? SignInTheme : defaultTheme}>
       <CssBaseline />
@@ -243,18 +255,31 @@ export default function SignIn() {
                   </Link>
                 </Box>
                 <TextField
-                  error={passwordError}
-                  helperText={passwordErrorMessage}
-                  name="password"
-                  placeholder="••••••"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  autoFocus
                   required
                   fullWidth
+                  name="password"
+                  placeholder="••••••"
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  autoComplete="new-password"
                   variant="outlined"
+                  error={passwordError}
+                  helperText={passwordErrorMessage}
                   color={passwordError ? 'error' : 'primary'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </FormControl>
               <FormControlLabel
@@ -266,7 +291,11 @@ export default function SignIn() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={validateInputs}
+                onClick={() =>
+                  navigate(
+                    `/pweza/dashboard`
+                  )
+                }
               >
                 Sign in
               </Button>
