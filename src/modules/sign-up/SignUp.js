@@ -11,7 +11,9 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
+import { useMutation } from "@tanstack/react-query";
 import ToggleButton from '@mui/material/ToggleButton';
+import { postSignup } from "../../common/apis/account";
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -19,6 +21,8 @@ import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { InputAdornment,IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
 
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -113,6 +117,10 @@ export default function SignUp() {
   const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const [phoneError, setPhoneError] = React.useState(false);
   const [phoneErrorMessage, setPhoneErrorMessage] = React.useState('');
+  const [lastNameError, setLastNameError] = React.useState(false);
+  const [lastNameErrorMessage, setLastNameMessage] = React.useState('');
+  const [userNameError, setUserNameError] = React.useState(false);
+  const [userNameErrorMessage, setUserNameErrorMessage] = React.useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
@@ -122,6 +130,8 @@ export default function SignUp() {
     const password = document.getElementById('password');
     const name = document.getElementById('name');
     const phoneNumber = document.getElementById('phone');
+    const lastName = document.getElementById('lastName');
+    const userName = document.getElementById('userName');
 
     let isValid = true;
 
@@ -151,6 +161,22 @@ export default function SignUp() {
       setNameError(false);
       setNameErrorMessage('');
     }
+    if (!lastName.value || lastName.value.length < 1) {
+      setLastNameError(true);
+      setLastNameMessage('Last Name is required.');
+      isValid = false;
+    } else {
+      setLastNameError(false);
+      setLastNameMessage('');
+    }
+    if (!userName.value || userName.value.length < 1) {
+      setUserNameError(true);
+      setUserNameError('User Name is required.');
+      isValid = false;
+    } else {
+      setUserNameError(false);
+      setUserNameErrorMessage('');
+    }    
 
     if (!phoneNumber.value || phoneNumber.value.length < 1) {
       setPhoneError(true);
@@ -172,15 +198,63 @@ export default function SignUp() {
     setShowCustomTheme((prev) => !prev);
   };
 
+  const handleToastClose = () => {
+    navigate("/sign-in");    
+  };
+
+  const postMutation = useMutation({ mutationFn: postSignup });
+
+
   const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
+    event.preventDefault();  
+    try {
+
+      const data = new FormData(event.currentTarget);
+   
+      const values = {
+        
+        email: data.get('email'),
+        password: data.get('password'),
+        firstName:data.get('name'),
+        lastName:data.get('lastName'),
+        userName:data.get('userName'),
+        phone:data.get('phone'),
+      }
+
+      postMutation.mutateAsync(values).then(response => {
+       
+        toast.success("You have Successfully created an account with pweza.", {
+          position: "top-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          onClose: handleToastClose,
+        });
+
+       
+    }).catch(error =>{
+      console.log(error.message);
+      toast.error(`An error occurred while creating your account. Please try again later.${error.message}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     });
+      } catch (error) {
+      toast.error(error.response.data, {
+        position: "top-right",
+        autoClose: 10000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -194,6 +268,7 @@ export default function SignUp() {
   return (
     <ThemeProvider theme={showCustomTheme ? SignUpTheme : defaultTheme}>
       <CssBaseline />
+      <ToastContainer/>
       <SignUpContainer direction="column" justifyContent="space-between">
         <Stack
           direction="row"
@@ -232,17 +307,45 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="name">Full name</FormLabel>
+                <FormLabel htmlFor="name">First Name</FormLabel>
                 <TextField
                   autoComplete="name"
                   name="name"
                   required
                   fullWidth
                   id="name"
-                  placeholder="Jon Snow"
+                  placeholder="Jon"
                   error={nameError}
                   helperText={nameErrorMessage}
                   color={nameError ? 'error' : 'primary'}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                <TextField
+                  autoComplete="lastName"
+                  name="lastName"
+                  required
+                  fullWidth
+                  id="lastName"
+                  placeholder="Snow"
+                  error={lastNameError}
+                  helperText={lastNameErrorMessage}
+                  color={lastNameError ? 'error' : 'primary'}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel htmlFor="userName">User Name</FormLabel>
+                <TextField
+                  autoComplete="userName"
+                  name="userName"
+                  required
+                  fullWidth
+                  id="userName"
+                  placeholder="Snow"
+                  error={userNameError}
+                  helperText={userNameErrorMessage}
+                  color={userNameError ? 'error' : 'primary'}
                 />
               </FormControl>
               <FormControl>
@@ -254,9 +357,9 @@ export default function SignUp() {
                   fullWidth
                   id="phone"
                   placeholder="07 ******"
-                  error={nameError}
-                  helperText={nameErrorMessage}
-                  color={nameError ? 'error' : 'primary'}
+                  error={phoneError}
+                  helperText={phoneErrorMessage}
+                  color={phoneError ? 'error' : 'primary'}
                 />
               </FormControl>
               <FormControl>
@@ -312,11 +415,7 @@ export default function SignUp() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={() =>
-                  navigate(
-                    `/pweza/dashboard`
-                  )
-                }
+                onClick={validateInputs}
               >
                 Sign up
               </Button>

@@ -22,6 +22,12 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/settings">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <SettingsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Settings" />
+    </ListItemButton>
     <ListItemButton component={Link} to="/pweza/orders">
       <ListItemIcon sx={{ color: 'white' }}>
         <ShoppingCartIcon />
