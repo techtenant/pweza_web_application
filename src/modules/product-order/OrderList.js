@@ -24,9 +24,11 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import { fakeData, usStates } from './makeData';
+import { getSettings, postSettings, updateSettings, deleteSettings } from '../../common/apis/settings';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const defaultTheme = createTheme();
@@ -38,67 +40,25 @@ const ProductOrders = () => {
     const columns = useMemo(
         () => [
             {
-                accessorKey: 'id',
-                header: 'Id',
+                accessorKey: 'key',
+                header: 'Key',
                 enableEditing: false,
                 size: 80,
             },
             {
-                accessorKey: 'firstName',
-                header: 'First Name',
+                accessorKey: 'value',
+                header: 'Value',
                 muiEditTextFieldProps: {
                     required: true,
-                    error: !!validationErrors?.firstName,
-                    helperText: validationErrors?.firstName,
-                    //remove any previous validation errors when user focuses on the input
+                    error: !!validationErrors?.value,
+                    helperText: validationErrors?.value,
+                  
                     onFocus: () =>
                         setValidationErrors({
                             ...validationErrors,
-                            firstName: undefined,
+                            value: undefined,
                         }),
-                    //optionally add validation checking for onBlur or onChange
-                },
-            },
-            {
-                accessorKey: 'lastName',
-                header: 'Last Name',
-                muiEditTextFieldProps: {
-                    required: true,
-                    error: !!validationErrors?.lastName,
-                    helperText: validationErrors?.lastName,
-                    //remove any previous validation errors when user focuses on the input
-                    onFocus: () =>
-                        setValidationErrors({
-                            ...validationErrors,
-                            lastName: undefined,
-                        }),
-                },
-            },
-            {
-                accessorKey: 'email',
-                header: 'Email',
-                muiEditTextFieldProps: {
-                    type: 'email',
-                    required: true,
-                    error: !!validationErrors?.email,
-                    helperText: validationErrors?.email,
-                    //remove any previous validation errors when user focuses on the input
-                    onFocus: () =>
-                        setValidationErrors({
-                            ...validationErrors,
-                            email: undefined,
-                        }),
-                },
-            },
-            {
-                accessorKey: 'state',
-                header: 'State',
-                editVariant: 'select',
-                editSelectOptions: usStates,
-                muiEditTextFieldProps: {
-                    select: true,
-                    error: !!validationErrors?.state,
-                    helperText: validationErrors?.state,
+                  
                 },
             },
         ],
@@ -106,61 +66,62 @@ const ProductOrders = () => {
     );
 
     //call CREATE hook
-    const { mutateAsync: createUser, isPending: isCreatingUser } =
-        useCreateUser();
+    const { mutateAsync: createSetting, isPending: isCreating } =
+    useCreateSetting();
     //call READ hook
     const {
-        data: fetchedUsers = [],
-        isError: isLoadingUsersError,
-        isFetching: isFetchingUsers,
-        isLoading: isLoadingUsers,
-    } = useGetUsers();
+        data: fetchedData = [],
+        isError: isLoadingError,
+        isFetching: isFetching,
+        isLoading: isLoading,
+    } = useGetData();
     //call UPDATE hook
-    const { mutateAsync: updateUser, isPending: isUpdatingUser } =
-        useUpdateUser();
+    const { mutateAsync: update, isPending: isUpdating } =
+        useUpdate();
     //call DELETE hook
-    const { mutateAsync: deleteUser, isPending: isDeletingUser } =
-        useDeleteUser();
+    const { mutateAsync: deleteSettings, isPending: isDeleting } =
+        useDelete();
 
     //CREATE action
-    const handleCreateUser = async ({ values, table }) => {
+    const handleCreateSettings = async ({ values, table }) => {
         const newValidationErrors = validateUser(values);
         if (Object.values(newValidationErrors).some((error) => error)) {
             setValidationErrors(newValidationErrors);
             return;
         }
         setValidationErrors({});
-        await createUser(values);
+        await createSetting(values);
         table.setCreatingRow(null); //exit creating mode
     };
 
     //UPDATE action
-    const handleSaveUser = async ({ values, table }) => {
+    const handleUpdate = async ({ values, table }) => {
         const newValidationErrors = validateUser(values);
         if (Object.values(newValidationErrors).some((error) => error)) {
             setValidationErrors(newValidationErrors);
             return;
         }
         setValidationErrors({});
-        await updateUser(values);
+        await update(values);
         table.setEditingRow(null); //exit editing mode
     };
 
     //DELETE action
     const openDeleteConfirmModal = (row) => {
-        if (window.confirm('Are you sure you want to delete this user?')) {
-            deleteUser(row.original.id);
+        if (window.confirm('Are you sure you want to delete this Settings?')) {
+            deleteSettings(row.original.id);
         }
     };
 
+   
     const table = useMaterialReactTable({
         columns,
-        data: fetchedUsers,
+        data: fetchedData.data,
         createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
         editDisplayMode: 'modal', //default ('row', 'cell', 'table', and 'custom' are also available)
         enableEditing: true,
         getRowId: (row) => row.id,
-        muiToolbarAlertBannerProps: isLoadingUsersError
+        muiToolbarAlertBannerProps: isLoadingError
             ? {
                 color: 'error',
                 children: 'Error loading data',
@@ -172,13 +133,13 @@ const ProductOrders = () => {
             },
         },
         onCreatingRowCancel: () => setValidationErrors({}),
-        onCreatingRowSave: handleCreateUser,
+        onCreatingRowSave: handleCreateSettings,
         onEditingRowCancel: () => setValidationErrors({}),
-        onEditingRowSave: handleSaveUser,
+        onEditingRowSave: handleUpdate,
         //optionally customize modal content
         renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
             <>
-                <DialogTitle variant="h3">Create New Order</DialogTitle>
+                <DialogTitle variant="h3">Create New Settings</DialogTitle>
                 <DialogContent
                     sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
                 >
@@ -192,7 +153,7 @@ const ProductOrders = () => {
         //optionally customize modal content
         renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
             <>
-                <DialogTitle variant="h3">Edit User</DialogTitle>
+                <DialogTitle variant="h3">Edit Settings</DialogTitle>
                 <DialogContent
                     sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
                 >
@@ -230,14 +191,14 @@ const ProductOrders = () => {
                     // );
                 }}
             >
-                Create New User
+                Create New Settings
             </Button>
         ),
         state: {
-            isLoading: isLoadingUsers,
-            isSaving: isCreatingUser || isUpdatingUser || isDeletingUser,
-            showAlertBanner: isLoadingUsersError,
-            showProgressBars: isFetchingUsers,
+            isLoading: isLoading,
+            isSaving: isCreating || isUpdating || isDeleting,
+            showAlertBanner: isLoadingError,
+            showProgressBars: isFetching,
         },
     });
 
@@ -245,78 +206,57 @@ const ProductOrders = () => {
 };
 
 //CREATE hook (post new user to api)
-function useCreateUser() {
+function useCreateSetting() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (user) => {
-            //send api update request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-            return Promise.resolve();
+        mutationFn: postSettings,
+        onSuccess: () => {
+          queryClient.invalidateQueries('settings');
+          toast.success('Setting added successfully');
         },
-        //client side optimistic update
-        onMutate: (newUserInfo) => {
-            queryClient.setQueryData(['users'], (prevUsers) => [
-                ...prevUsers,
-                {
-                    ...newUserInfo,
-                    id: (Math.random() + 1).toString(36).substring(7),
-                },
-            ]);
+        onError: (error) => {
+          toast.error(`Error: ${error.message}`);
         },
-        // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
     });
 }
 
-//READ hook (get users from api)
-function useGetUsers() {
+//READ hook (get Data from api)
+function useGetData() {
     return useQuery({
-        queryKey: ['users'],
-        queryFn: async () => {
-            //send api request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-            return Promise.resolve(fakeData);
-        },
+        queryKey: 'settings',
+        queryFn: getSettings,
         refetchOnWindowFocus: false,
     });
 }
 
 //UPDATE hook (put user in api)
-function useUpdateUser() {
+function useUpdate() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (user) => {
-            //send api update request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-            return Promise.resolve();
-        },
-        //client side optimistic update
-        onMutate: (newUserInfo) => {
-            queryClient.setQueryData(['users'], (prevUsers) =>
-                prevUsers?.map((prevUser) =>
-                    prevUser.id === newUserInfo.id ? newUserInfo : prevUser,
-                ),
-            );
-        },
-        // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+        mutationFn: updateSettings,
+      onSuccess: () => {
+        queryClient.invalidateQueries('settings');
+        toast.success('Setting updated successfully');
+      },
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`);
+      },
+       
     });
 }
 
 //DELETE hook (delete user in api)
-function useDeleteUser() {
+function useDelete() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: async (userId) => {
-            //send api update request here
-            await new Promise((resolve) => setTimeout(resolve, 1000)); //fake api call
-            return Promise.resolve();
-        },
-        //client side optimistic update
-        onMutate: (userId) => {
-            queryClient.setQueryData(['users'], (prevUsers) =>
-                prevUsers?.filter((user) => user.id !== userId),
-            );
-        },
-        // onSettled: () => queryClient.invalidateQueries({ queryKey: ['users'] }), //refetch users after mutation, disabled for demo
+        mutationFn: deleteSettings,
+      onSuccess: () => {
+        queryClient.invalidateQueries('settings');
+        toast.success('Setting deleted successfully');
+      },
+      onError: (error) => {
+        toast.error(`Error: ${error.message}`);
+      },
     });
 }
 
@@ -337,20 +277,12 @@ const OrderList = () => (
 export default OrderList;
 
 const validateRequired = (value) => !!value.length;
-const validateEmail = (email) =>
-    !!email.length &&
-    email
-        .toLowerCase()
-        .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        );
 
-function validateUser(user) {
+function validateUser(settings) {
     return {
-        firstName: !validateRequired(user.firstName)
-            ? 'First Name is Required'
+        value: !validateRequired(settings.value)
+            ? 'Value Required'
             : '',
-        lastName: !validateRequired(user.lastName) ? 'Last Name is Required' : '',
-        email: !validateEmail(user.email) ? 'Incorrect Email Format' : '',
+               
     };
 }
