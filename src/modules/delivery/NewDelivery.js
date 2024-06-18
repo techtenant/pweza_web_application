@@ -25,6 +25,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import MyLocationIcon from '@mui/icons-material/MyLocation';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {
   getBikes
@@ -46,6 +48,64 @@ const Card = styled(MuiCard)(spacing);
 const CardContent = styled(MuiCardContent)(spacing);
 const TextField = styled(MuiTextField)(spacing);
 const Button = styled(MuiButton)(spacing);
+
+const mapStyles = [
+  {
+    "featureType": "water",
+    "stylers": [
+      { "saturation": 43 },
+      { "lightness": -11 },
+      { "hue": "#0088ff" }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.fill",
+    "stylers": [
+      { "hue": "#ff0000" },
+      { "saturation": -100 },
+      { "lightness": 99 }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      { "color": "#808080" },
+      { "lightness": 54 }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "elementType": "geometry.fill",
+    "stylers": [
+      { "color": "#ece2d9" }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [
+      { "color": "#ccdca1" }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      { "color": "#767676" }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      { "color": "#ffffff" }
+    ]
+  },
+  /* Add more styles as needed */
+];
+
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   alternativeLabel: {
@@ -125,12 +185,13 @@ const containerStyle = {
 };
 
 const center = {
-    lat: -3.745,
-    lng: -38.523
+    lat: 1.2921,
+    lng: 36.8219
 };
 
 const NewDelivery = () => {
   const row = getFromLocalStorage("applications-detail-row") || {}
+  const account = getFromLocalStorage("user") || {}
   const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
   let { id } = useParams();
@@ -141,18 +202,24 @@ const NewDelivery = () => {
   const [distance, setDistance] = useState(0);
   const [cost, setCost] = useState(0);
 
-  const handleMapClick = (event) => {
-      const location = {
-          lat: event.latLng.lat(),
-          lng: event.latLng.lng()
-      };
-      if (!source) {
-          setSource(location);
-      } else {
-          setDestination(location);
-          calculateDistance(source, location);
-      }
-  };
+
+
+
+  const handleMapClick = async (event) => {
+    const location = {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng()
+    };
+    
+    if (!source) {
+        setSource(location);
+        formik.setFieldValue('sourceAddress', `${location.lat},${location.lng}`);
+    } else {
+        setDestination(location);
+        formik.setFieldValue('destinationAddress', `${location.lat},${location.lng}`);
+        calculateDistance(source, location);
+    }
+};
 
   const calculateDistance = (source, destination) => {
       const radlat1 = Math.PI * source.lat / 180;
@@ -164,12 +231,14 @@ const NewDelivery = () => {
       dist = dist * 180 / Math.PI;
       dist = dist * 60 * 1.1515 * 1.609344; // Distance in kilometers
       setDistance(dist);
+      formik.setFieldValue('distance', dist);
       calculateCost(dist);
   };
 
   const calculateCost = (distance) => {
-      const ratePerKm = 2; // Define your cost per kilometer
+      const ratePerKm = 2; // Define your cost per kilometer      
       setCost(distance * ratePerKm);
+      formik.setFieldValue('cost', distance * ratePerKm);
   };
 
   const postMutation = useMutation({ mutationFn: postDelivery });
@@ -200,18 +269,17 @@ const NewDelivery = () => {
   const formik = useFormik({
 
     initialValues: {
-      userId: row?.userId || "",
-      riderId: row?.riderId || "",
+      userId: row?.userId || account.id,
+      riderId: row?.riderId || account.id,
       bikeId: row?.bikeId || "",
-      distance: row?.distance || "",
-      cost: row?.cost || "",
+      distance: row?.distance || 0,
+      cost: row?.cost || 0,
       packageId: row?.packageId || "",
       sourceAddress: row?.sourceAddress || "",
       destinationAddress: row?.destinationAddress || "",
+      status: row?.status || "pending payment"
     },
     validationSchema: Yup.object().shape({
-      destinationAddress: Yup.string().required("Required"),
-      sourceAddress: Yup.string().required("Required"),
       packageId: Yup.string().required("Required"),
       bikeId: Yup.string().required("Required"),      
     }),
@@ -219,7 +287,7 @@ const NewDelivery = () => {
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       console.log(values);
       try {
-
+console.log("values",values);
         if (row?.id) {
           values.id = row.id;
 
@@ -353,120 +421,43 @@ const NewDelivery = () => {
         );
       case 1:
         return (
-            <Box>
-            <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-                <GoogleMap
-                    mapContainerStyle={containerStyle}
-                    center={center}
-                    zoom={10}
-                    onClick={handleMapClick}
-                >
-                    {source && <Marker position={source} label="S" />}
-                    {destination && <Marker position={destination} label="D" />}
-                </GoogleMap>
-            </LoadScript>
-            <Box mt={2}>
-                <Typography variant="h6">Distance: {distance.toFixed(2)} km</Typography>
-                <Typography variant="h6">Cost: ${cost.toFixed(2)}</Typography>
-            </Box>
-            <Button onClick={() => { setSource(null); setDestination(null); setDistance(0); setCost(0); }}>Reset</Button>
-        </Box>
+          <Box style={{ maxWidth: '100%', margin: 'auto', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+    <LoadScript googleMapsApiKey="AIzaSyAATO2CjK3qI-fH-tMchgsQMI9oaOt2Tc0">
+        <GoogleMap
+            mapContainerStyle={{ width: '100%', height: '400px' }}
+            center={center}
+            zoom={7}
+            options={{
+                styles: mapStyles, // your custom map style array
+                disableDefaultUI: true, // disable default map UI
+                zoomControl: true, // add zoom control
+                mapTypeControl: true, // add map type control
+            }}
+            onClick={handleMapClick}
+        >
+            {source && <Marker position={source} label="S" icon={{path: MyLocationIcon,scale: 7, fillColor: '#1976d2', fillOpacity:1,strokeWeight:2}} />}
+            {destination && <Marker position={destination} label="D" icon={{path: LocationOnIcon,scale: 7, fillColor: '#ff4081', fillOpacity:1,strokeWeight:2}} />}
+        </GoogleMap>
+    </LoadScript>
+    <Box mt={2} style={{ textAlign: 'center' }}>
+        <Typography variant="h6" style={{ margin: '10px 0' }}>Distance: <strong>{distance.toFixed(2)} km</strong></Typography>
+        <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>${cost.toFixed(2)}</strong></Typography>
+    </Box>
+    <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={() => { setSource(null); setDestination(null); setDistance(0); setCost(0); }}
+        style={{ display: 'block', margin: '20px auto' }}
+    >
+        Reset
+    </Button>
+</Box>
+
         );
       case 2:
         return (
           <Box>
-            <Grid
-              container
-              spacing={5}
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-            >
-              <Grid item sm={6}>
-                <FormControl
-                  sx={{ m: 1, width: "100%", marginBottom: "5px" }}
-                  size="medium"
-                >
-                  <FormLabel
-                    style={{
-                      fontSize: "16px",
-                      color: "#000",
-                      fontWeight: "bold",
-                    }}
-                  >Distance</FormLabel>
-                  <TextField
-                    name="distance"
-                    label="distance"
-                    value={formik.values.distance}
-                    error={Boolean(
-                      formik.touched.distance && formik.errors.distance
-                    )}
-                    fullWidth
-                    helperText={
-                      formik.touched.distance && formik.errors.distance
-                    }
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    variant="outlined"
-                    disabled={id != undefined}
-                    sx={{
-                      marginTop: 2,
-                      '& legend': { display: 'none' },
-                      '& .MuiInputLabel-shrink': { opacity: 0, transition: "all 0.2s ease-in" }
-
-                    }}
-                    my={2}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={5}
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-            >
-               <Grid item sm={6}>
-                <FormControl
-                  sx={{ m: 1, width: "100%", marginBottom: "5px" }}
-                  size="medium"
-                >
-                  <FormLabel
-                    style={{
-                      fontSize: "16px",
-                      color: "#000",
-                      fontWeight: "bold",
-                    }}
-                  >Cost</FormLabel>
-                  <TextField
-                    name="cost"
-                    label="cost"
-                    value={formik.values.cost}
-                    error={Boolean(
-                      formik.touched.cost && formik.errors.cost
-                    )}
-                    fullWidth
-                    helperText={
-                      formik.touched.cost && formik.errors.cost
-                    }
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    variant="outlined"
-                    disabled={id != undefined}
-                    sx={{
-                      marginTop: 2,
-                      '& legend': { display: 'none' },
-                      '& .MuiInputLabel-shrink': { opacity: 0, transition: "all 0.2s ease-in" }
-
-                    }}
-                    my={2}
-                  />
-                </FormControl>
-              </Grid>
-
-
-            </Grid>
+            
           </Box>
         );
       default:
