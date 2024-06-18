@@ -9,8 +9,11 @@ import "react-toastify/dist/ReactToastify.min.css";
 import LandingPage from './modules/landingPage/LandingPage';
 import Layout from './common/layout/Layout';
 import Dashboard from './modules/dashboard/Dashboard';
-import ProductOrders from './modules/product-order/OrderList';
-import Checkout from './modules/delivery/Checkout';
+import Packages from './modules/packages/Packages';
+import BikeTypes from './modules/bikes/BikeTypes';
+import Bikes from './modules/bikes/Bikes';
+import DeliveryList from './modules/delivery/deliveryList';
+import NewDelivery from './modules/delivery/NewDelivery';
 import UserAccount from './modules/account/AccountPage';
 import FeedBackPage from './modules/feedback/FeedBackPage';
 import SettingsTable from './modules/settings/Settings';
@@ -80,11 +83,14 @@ function App() {
               <Layout>
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="orders" element={<ProductOrders />} />
-                  <Route path="delivery" element={<Checkout />} />
+                  <Route path="packages" element={<Packages />} />
+                  <Route path="biketypes" element={<BikeTypes />} />
+                  <Route path="bikes" element={<Bikes />} />
+                  <Route path="delivery" element={<DeliveryList />} />
                   <Route path="account" element={<UserAccount />} />
                   <Route path="feedback" element={<FeedBackPage />} />  
-                  <Route path="settings" element={<SettingsTable />} />                  
+                  <Route path="settings" element={<SettingsTable />} />  
+                  <Route path="checkout" element={<NewDelivery />} />                  
                 </Routes>
               </Layout>
               </ProtectedRoute>

@@ -6,13 +6,15 @@ import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PeopleIcon from '@mui/icons-material/People';
+import TwoWheelerIcon from '@mui/icons-material/TwoWheeler';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
+import SportsMotorsportsIcon from '@mui/icons-material/SportsMotorsports';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 
 export const mainListItems = (
   <React.Fragment>
@@ -28,25 +30,36 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Settings" />
     </ListItemButton>
-    <ListItemButton component={Link} to="/pweza/orders">
+    <ListItemButton component={Link} to="/pweza/packages">
       <ListItemIcon sx={{ color: 'white' }}>
-        <ShoppingCartIcon />
+        <InventoryIcon />
       </ListItemIcon>
-      <ListItemText primary="Orders" />
+      <ListItemText primary="Packages" />
+    </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/biketypes">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <TwoWheelerIcon />
+      </ListItemIcon>
+      <ListItemText primary="Bike Types" />
+    </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/bikes">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <SportsMotorsportsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Bikes" />
+    </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/delivery">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <DeliveryDiningIcon />
+      </ListItemIcon>
+      <ListItemText primary="Product Delivery" />
     </ListItemButton>
     <ListItemButton >
       <ListItemIcon sx={{ color: 'white' }}>
         <CreditCardIcon />
       </ListItemIcon>
       <ListItemText primary="Payments" />
-    </ListItemButton>
-    
-    <ListItemButton component={Link} to="/pweza/delivery">
-      <ListItemIcon sx={{ color: 'white' }}>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Product Delivery" />
-    </ListItemButton>
+    </ListItemButton>  
     <ListItemButton component={Link} to="/pweza/feedback">
       <ListItemIcon sx={{ color: 'white' }}>
         <FeedbackIcon />

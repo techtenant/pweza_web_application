@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField,Rating, Grid,CircularProgress, Typography, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
+import { Button, TextField, Rating, Grid, CircularProgress, Typography, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
 import { orange } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { Download } from '@mui/icons-material';
@@ -80,94 +80,94 @@ const FeedbackForm = () => {
     // The JSX for the form elements
     return (
         <Grid container alignItems="stretch">
-        <Grid item md={12} style={{ display: "flex", marginTop: "50px", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
-        <form onSubmit={handleSubmit} style={{ width: '800px', height: '100%', margin: 'auto',  padding: '20px', borderRadius: '10px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h4" style={{ color: orange[500] }}>
-                    Feedback Form
-                </Typography>
-                <PurpleButton variant="contained" startIcon={<PurpleDownload />}>
-                    Download
-                </PurpleButton>
-            </div>
-            <TextField
-                required
-                label="Enter your Full Name"
-                value={name}
-                onChange={handleNameChange}
-                style={{ width: '100%', marginTop: '20px' }}
-            />
-            <TextField
-                required
-                label="Your Email address"
-                value={email}
-                onChange={handleEmailChange}
-                style={{ width: '100%', marginTop: '20px' }}
-            />
-            <FormControl component="fieldset" style={{ marginTop: '20px' }}>
-                <FormLabel component="legend">Is this the first time you have visited the website?</FormLabel>
-                <RadioGroup row value={firstTime} onChange={handleFirstTimeChange}>
-                    <FormControlLabel value="Yes" control={<PurpleRadio />} label="Yes" />
-                    <FormControlLabel value="No" control={<PurpleRadio />} label="No" />
-                </RadioGroup>
-            </FormControl>
-            <TextField
-                required
-                label="What is the PRIMARY reason you came to the site?"
-                multiline
-                rows={4}
-                value={reason}
-                onChange={handleReasonChange}
-                style={{ width: '100%', marginTop: '20px' }}
-            />
-            <TextField
-                required
-                label="Did you find what you needed?"
-                multiline
-                rows={2}
-                value={found}
-                onChange={handleFoundChange}
-                style={{ width: '100%', marginTop: '20px' }}
-            />
-            <TextField
-                required
-                label="User Friendliness"
-                multiline
-                rows={2}
-                value={userFriendly}
-                onChange={handleUserFriendlyChange}
-                style={{ width: '100%', marginTop: '20px' }}
-            />
-             <FormControl fullWidth>
-                                        <FormLabel component="legend">Rate Your Experience</FormLabel>
-                                        <Rating
-                                            name="experience-rating"
-                                            value={rating}
-                                            precision={0.5}
-                                            onChange={(event, newValue) => {
-                                                setRating(newValue);
-                                            }}
-                                        />
-                                    </FormControl>
-            <PurpleButton type="submit" variant="contained" disabled={loading}
-                fullWidth
-                sx={{
-                    height: 48,
-                    '@media (min-width: 600px)': {
-                        width: '50%',
+            <Grid item md={12} style={{ display: "flex", marginTop: "50px", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
+                <form onSubmit={handleSubmit} style={{ width: '800px', height: '100%', margin: 'auto', padding: '20px', borderRadius: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="h4" style={{ color: orange[500] }}>
+                            Feedback Form
+                        </Typography>
+                        <PurpleButton variant="contained" startIcon={<PurpleDownload />}>
+                            Download
+                        </PurpleButton>
+                    </div>
+                    <TextField
+                        required
+                        label="Enter your Full Name"
+                        value={name}
+                        onChange={handleNameChange}
+                        style={{ width: '100%', marginTop: '20px' }}
+                    />
+                    <TextField
+                        required
+                        label="Your Email address"
+                        value={email}
+                        onChange={handleEmailChange}
+                        style={{ width: '100%', marginTop: '20px' }}
+                    />
+                    <FormControl component="fieldset" style={{ marginTop: '20px' }}>
+                        <FormLabel component="legend">Is this the first time using our services?</FormLabel>
+                        <RadioGroup row value={firstTime} onChange={handleFirstTimeChange}>
+                            <FormControlLabel value="Yes" control={<PurpleRadio />} label="Yes" />
+                            <FormControlLabel value="No" control={<PurpleRadio />} label="No" />
+                        </RadioGroup>
+                    </FormControl>
+                    <TextField
+                        required
+                        label="What is the PRIMARY reason for your decision to use our services?"
+                        multiline
+                        rows={4}
+                        value={reason}
+                        onChange={handleReasonChange}
+                        style={{ width: '100%', marginTop: '20px' }}
+                    />
+                    <TextField
+                        required
+                        label="Did we meet your expectations?"
+                        multiline
+                        rows={2}
+                        value={found}
+                        onChange={handleFoundChange}
+                        style={{ width: '100%', marginTop: '20px' }}
+                    />
+                    <TextField
+                        required
+                        label="Was the site easy to navigate and fast processing of your application"
+                        multiline
+                        rows={2}
+                        value={userFriendly}
+                        onChange={handleUserFriendlyChange}
+                        style={{ width: '100%', marginTop: '20px' , marginBottom: '20px'}}
+                    />
+                    <FormControl fullWidth>
+                        <FormLabel component="legend">Rate Your Experience</FormLabel>
+                        <Rating
+                            name="experience-rating"
+                            value={rating}
+                            precision={0.5}
+                            onChange={(event, newValue) => {
+                                setRating(newValue);
+                            }}
+                        />
+                    </FormControl>
+                    <PurpleButton type="submit" variant="contained" disabled={loading}
+                        fullWidth
+                        sx={{
+                            height: 48,
+                            '@media (min-width: 600px)': {
+                                width: '50%',
 
-                    }
-                }} style={{ width: '100%', marginTop: '20px' }}>
-                {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                ) : (
-                    ' Submit Feedback'
-                )}
+                            }
+                        }} style={{ width: '100%', marginTop: '20px' }}>
+                        {loading ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            ' Submit Feedback'
+                        )}
 
-            </PurpleButton>
+                    </PurpleButton>
 
-        </form>
-        </Grid>
+                </form>
+            </Grid>
         </Grid>
 
     );

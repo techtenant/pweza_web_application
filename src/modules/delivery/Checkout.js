@@ -123,7 +123,7 @@ export default function Checkout() {
             <Button
               startIcon={<ArrowBackRoundedIcon />}
               component="a"
-              href="/dashboard"
+              href="/pweza/delivery"
               sx={{ ml: '-8px' }}
             >
               Back
@@ -179,7 +179,7 @@ export default function Checkout() {
               <Button
                 startIcon={<ArrowBackRoundedIcon />}
                 component="a"
-                href="/dashboard"
+                href="/pweza/dashboard"
                 sx={{ alignSelf: 'start' }}
               >
                 Back 

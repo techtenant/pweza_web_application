@@ -12,6 +12,7 @@ import { alpha, styled } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import { getFromLocalStorage, removeItem } from '../../common/utils/LocalStorage';
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   '&:hover': {
@@ -28,6 +29,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const account = getFromLocalStorage("user") || {}
   const navigate = useNavigate();
 
   const handleOpen = (event) => {
@@ -35,6 +37,7 @@ export default function AccountPopover() {
   };
 
   const handleLogout = () => {
+    removeItem("user");
     navigate(`/sign-in`);
   };
 
@@ -78,9 +81,9 @@ export default function AccountPopover() {
       slotProps={{ paper: { sx: { width: '240px' } } }}
     >
       <Box sx={{ p: '16px 20px ' }}>
-        <Typography variant="subtitle1">Sofia Rivers</Typography>
+        <Typography variant="subtitle1">{account?.firstName} {account?.lastName}</Typography>
         <Typography color="text.secondary" variant="body2">
-          sofia.rivers@devias.io
+          {account?.email}
         </Typography>
       </Box>
       <Divider />

@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import HomeIcon from '@mui/icons-material/Home';
 import { emphasize, styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { getSettings, postSettings, updateSettings, deleteSettings } from '../../common/apis/settings';
+import { getPackages, postPackages, updatePackages, deletePackages } from '../../common/apis/packages';
 import { Button, TextField, Dialog,Breadcrumbs, DialogActions, Chip, Box, DialogContent, IconButton, DialogTitle, Grid } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -37,22 +37,22 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   };
 }); // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
-const SettingsTable = () => {
+const Packages = () => {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [formData, setFormData] = useState({ key: '', value: '' });
-  const { data: settingsData, isLoading } = useQuery({
-    queryKey: 'settings',
-    queryFn: getSettings
+  const [formData, setFormData] = useState({ type: '', weight: 0,height:0 });
+  const { data: packagesData, isLoading } = useQuery({
+    queryKey: 'packages',
+    queryFn: getPackages
   });
-  const addSettingMutation = useMutation({
-    mutationFn: postSettings,
+  const addMutation = useMutation({
+    mutationFn: postPackages,
     onSuccess: () => {
-      queryClient.invalidateQueries('settings');
-      toast.success('Setting added successfully');
+      queryClient.invalidateQueries('packages');
+      toast.success('Package added successfully');
       handleClose();
     },
     onError: (error) => {
@@ -60,22 +60,22 @@ const SettingsTable = () => {
     },
   });
 
-  const updateSettingMutation = useMutation({
-    mutationFn: updateSettings,
+  const updateMutation = useMutation({
+    mutationFn: updatePackages,
     onSuccess: () => {
-      queryClient.invalidateQueries('settings');
-      toast.success('Setting updated successfully');
+      queryClient.invalidateQueries('packages');
+      toast.success('Package updated successfully');
     },
     onError: (error) => {
       toast.error(`Error: ${error.message}`);
     },
   });
 
-  const deleteSettingMutation = useMutation({
-    mutationFn: deleteSettings,
+  const deleteMutation = useMutation({
+    mutationFn: deletePackages,
     onSuccess: () => {
-      queryClient.invalidateQueries('settings');
-      toast.success('Setting deleted successfully');
+      queryClient.invalidateQueries('packages');
+      toast.success('Package deleted successfully');
     },
     onError: (error) => {
       toast.error(`Error: ${error.message}`);
@@ -91,13 +91,18 @@ const SettingsTable = () => {
         size: 80,
       },
       {
-        accessorKey: 'key',
-        header: 'Key',
+        accessorKey: 'type',
+        header: 'Type',
         size: 80,
       },
       {
-        accessorKey: 'value',
-        header: 'Value',
+        accessorKey: 'weight',
+        header: 'Weight',
+        size: 80,
+      },
+      {
+        accessorKey: 'height',
+        header: 'Height',
         size: 80,
       },
       {
@@ -108,7 +113,7 @@ const SettingsTable = () => {
               color="primary"
               onClick={() => {
                 setSelectedRow(row.original);
-                setFormData({ key: row.original.key, value: row.original.value });
+                setFormData({ type: row.original.type, weight: row.original.weight,height:row.original.height });
                 setEditOpen(true);
               }}
             >
@@ -131,24 +136,24 @@ const SettingsTable = () => {
   );
 
   const handleAdd = async (values) => {
-    await addSettingMutation.mutateAsync(values);
+    await addMutation.mutateAsync(values);
   };
 
   const handleUpdate = async (values) => {
-    await updateSettingMutation.mutateAsync(values);
+    await updateMutation.mutateAsync(values);
   };
 
   const handleDelete = async () => {
     if (selectedRow) {
-      await deleteSettingMutation.mutateAsync(selectedRow.id);
+      await deleteMutation.mutateAsync(selectedRow.id);
       setConfirmDeleteOpen(false);
       setSelectedRow(null);
     }
   };
   const handleEdit = async () => {
     if (selectedRow) {
-      await updateSettingMutation.mutateAsync({ ...selectedRow, ...formData });
-      setFormData({ key: '', value: '' }); // Reset form
+      await updateMutation.mutateAsync({ ...selectedRow, ...formData });
+      setFormData({ type: '', weight: 0,height:0 }); // Reset form
       handleEditClose(); // Close dialog after editing
     }
   };
@@ -159,8 +164,8 @@ const SettingsTable = () => {
   };
 
   const handleCreate = async () => {
-    await addSettingMutation.mutateAsync(formData);
-    setFormData({ key: '', value: '' }); // Reset form
+    await addMutation.mutateAsync(formData);
+    setFormData({ type: '', weight: 0,height:0 }); // Reset form
   };
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -193,7 +198,7 @@ const SettingsTable = () => {
         <ThemeProvider theme={tableTheme}>
           <MaterialReactTable
             columns={columns}
-            data={settingsData?.data || []}
+            data={packagesData?.data || []}
             isLoading={isLoading}
             renderTopToolbarCustomActions={({ table }) => (
               <Box
@@ -218,7 +223,7 @@ const SettingsTable = () => {
                     },
                   }}
                 >
-                  New Settings
+                  New Package
                 </Button>
 
               </Box>
@@ -227,16 +232,17 @@ const SettingsTable = () => {
         </ThemeProvider>
 
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Add New Setting</DialogTitle>
+          <DialogTitle>Add New Package</DialogTitle>
           <DialogContent sx={{display: 'flex', flexDirection: 'column',gap:'1rem',minWidth:'400px'}}>
             <TextField
               autoFocus
               variant="standard"
-              name="key"
-              label="Key"
+              name="type"
+              label="Type"
+              required
               type="text"
               fullWidth
-              value={formData.key}
+              value={formData.type}
               onChange={handleFormChange}
               sx={{
                 marginBottom: '1rem'
@@ -244,11 +250,25 @@ const SettingsTable = () => {
             />
             <TextField
               variant="standard"
-              name="value"
-              label="Value"
-              type="text"
+              name="weight"
+              required
+              label="Weight (Kilograms)"
+              type="number"
               fullWidth
-              value={formData.value}
+              value={formData.weight}
+              onChange={handleFormChange}
+              sx={{
+                marginBottom: '16px'
+              }}
+            />
+             <TextField
+              variant="standard"
+              name="height"
+              required
+              label="Height (Metres)"
+              type="number"
+              fullWidth
+              value={formData.height}
               onChange={handleFormChange}
               sx={{
                 marginBottom: '16px'
@@ -261,28 +281,42 @@ const SettingsTable = () => {
           </DialogActions>
         </Dialog>
         <Dialog open={editOpen} onClose={handleEditClose}>
-          <DialogTitle>Edit Setting</DialogTitle>
+          <DialogTitle>Edit Package</DialogTitle>
           <DialogContent sx={{display: 'flex', flexDirection: 'column',gap:'1rem',minWidth:'400px'}}>
             <TextField
               autoFocus
               variant="standard"
-              name="key"
-              label="Key"
+              name="type"
+              label="Type"
               type="text"
               fullWidth
-              value={formData.key}
+              value={formData.type}
               onChange={handleFormChange}
               sx={{
                 marginBottom: '16px'
               }}
             />
-            <TextField
+           <TextField
               variant="standard"
-              name="value"
-              label="Value"
-              type="text"
+              name="weight"
+              label="Weight (Kilograms)"
+              type="number"
+              required
               fullWidth
-              value={formData.value}
+              value={formData.weight}
+              onChange={handleFormChange}
+              sx={{
+                marginBottom: '16px'
+              }}
+            />
+             <TextField
+              variant="standard"
+              name="height"
+              label="Height (Metres)"
+              type="number"
+              required
+              fullWidth
+              value={formData.height}
               onChange={handleFormChange}
               sx={{
                 marginBottom: '16px'
@@ -300,7 +334,7 @@ const SettingsTable = () => {
         >
           <DialogTitle>Confirm Delete</DialogTitle>
           <DialogContent>
-            Are you sure you want to delete this setting?
+            Are you sure you want to delete this package?
           </DialogContent>
           <DialogActions>
             <Button onClick={handleConfirmDeleteClose}>Cancel</Button>
@@ -314,4 +348,4 @@ const SettingsTable = () => {
   );
 };
 
-export default SettingsTable;
+export default Packages;
