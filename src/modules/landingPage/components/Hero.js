@@ -24,8 +24,8 @@ const StyledBox = styled('div')(({ theme }) => ({
   outline: '1px solid',
   backgroundImage: `url(${
     theme.palette.mode === 'light'
-      ? '/static/images/templates/templates-images/hero-light.png'
-      : '/static/images/templates/templates-images/hero-dark.png'
+      ? '/delivery1.jpg'
+      : '/delivery1.jpg'
   })`,
   backgroundSize: 'cover',
   outlineColor:
