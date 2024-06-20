@@ -422,7 +422,7 @@ console.log("values",values);
       case 1:
         return (
           <Box style={{ maxWidth: '100%', margin: 'auto', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-    <LoadScript googleMapsApiKey="">
+    <LoadScript googleMapsApiKey="AIzaSyAATO2CjK3qI-fH-tMchgsQMI9oaOt2Tc0">
         <GoogleMap
             mapContainerStyle={{ width: '100%', height: '400px' }}
             center={center}
@@ -441,7 +441,7 @@ console.log("values",values);
     </LoadScript>
     <Box mt={2} style={{ textAlign: 'center' }}>
         <Typography variant="h6" style={{ margin: '10px 0' }}>Distance: <strong>{distance.toFixed(2)} km</strong></Typography>
-        <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>${cost.toFixed(2)}</strong></Typography>
+        <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>Ksh. {cost.toFixed(2)}</strong></Typography>
     </Box>
     <Button 
         variant="contained" 

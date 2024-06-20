@@ -87,7 +87,7 @@ const FeedbackForm = () => {
                             Feedback Form
                         </Typography>
                         <PurpleButton variant="contained" startIcon={<PurpleDownload />}>
-                            Download
+                            Review
                         </PurpleButton>
                     </div>
                     <TextField

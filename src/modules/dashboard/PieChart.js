@@ -80,7 +80,7 @@ const PieChart = ({ data }) => {
     <Card sx={{ height: '100%' }}>
       <CardContent>
         <Typography variant="h6" component="div" gutterBottom>
-          Product Categories
+          Package Categories
         </Typography>
         <div style={{ height: '300px' }}>
           <Doughnut data={chartData} options={options} />

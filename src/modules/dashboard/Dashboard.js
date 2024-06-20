@@ -59,31 +59,31 @@ const latestProductsData = [
     id: 1,
     imageUrl: '/cisco.svg',
     description: 'Wireless Bluetooth Headphones',
-    lastUpdated: '2023-06-01'
+    lastUpdated: '2024-06-01'
   },
   {
     id: 2,
     imageUrl: '/Huawei.svg',
     description: 'Compact Digital Camera',
-    lastUpdated: '2023-05-25'
+    lastUpdated: '2024-05-25'
   },
   {
     id: 3,
     imageUrl: '/microsoft.svg',
     description: 'Smart Fitness Watch',
-    lastUpdated: '2023-05-20'
+    lastUpdated: '2024-05-20'
   },
   {
     id: 4,
     imageUrl: '/oracle.svg',
     description: 'Portable Power Bank',
-    lastUpdated: '2023-05-18'
+    lastUpdated: '2024-05-18'
   },
   {
     id: 5,
     imageUrl: '/school.svg',
     description: 'USB-C Charging Cable',
-    lastUpdated: '2023-05-15'
+    lastUpdated: '2024-05-15'
   }
 ];
 
@@ -91,40 +91,40 @@ const latestOrdersData = [
   {
     orderNo: 'ORD001',
     customerName: 'John Doe',
-    date: '2023-06-03',
+    date: '2024-06-03',
     status: 'Delivered'
   },
   {
     orderNo: 'ORD002',
     customerName: 'Jane Smith',
-    date: '2023-06-02',
+    date: '2024-06-02',
     status: 'Pending'
   },
   {
     orderNo: 'ORD003',
     customerName: 'William Johnson',
-    date: '2023-06-01',
+    date: '2024-06-01',
     status: 'Refunded'
   },
   {
     orderNo: 'ORD004',
     customerName: 'Emma Wilson',
-    date: '2023-05-31',
+    date: '2024-05-31',
     status: 'Delivered'
   },
   {
     orderNo: 'ORD005',
     customerName: 'Olivia Brown',
-    date: '2023-05-30',
+    date: '2024-05-30',
     status: 'Pending'
   }
 ];
 
 const cardsData = [
-  { title: 'Budget', value: '$24,000', icon: MonetizationOnIcon, color: '#1976d2' },
+  { title: 'Budget', value: 'Ksh. 24,000', icon: MonetizationOnIcon, color: '#1976d2' },
   { title: 'Total Customers', value: '1,600', icon: GroupsIcon, color: '#dc004e' },
-  { title: 'Task Progress', value: '75%', icon: FormatListBulletedIcon, color: '#2e7d32' },
-  { title: 'Total Profit', value: '$35,000', icon: AttachMoneyIcon, color: '#ffa000' },
+  { title: 'Delivery in Progress', value: '75%', icon: FormatListBulletedIcon, color: '#2e7d32' },
+  { title: 'Total Profit', value: 'Ksh. 35,000', icon: AttachMoneyIcon, color: '#ffa000' },
 ];
 
 
@@ -178,9 +178,9 @@ export default function Dashboard() {
             <Grid item xs={12} md={6}>
               <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                 {latestProductsData && latestProductsData.length > 0 ? (
-                  <LatestProductsTable title="Latest Products" products={latestProductsData} />
+                  <LatestProductsTable title="Latest Packages" products={latestProductsData} />
                 ) : (
-                  <Typography variant="body1">No products available.</Typography>
+                  <Typography variant="body1">No Packages available.</Typography>
                 )}
               </Paper>
             </Grid>
@@ -189,7 +189,7 @@ export default function Dashboard() {
                 {latestOrdersData && latestOrdersData.length > 0 ? (
                   <LatestOrders title="Latest Orders" orders={latestOrdersData} />
                 ) : (
-                  <Typography variant="body1">No products available.</Typography>
+                  <Typography variant="body1">No Packages available.</Typography>
                 )}
               </Paper>
             </Grid>
