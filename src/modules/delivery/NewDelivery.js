@@ -32,15 +32,15 @@ import {
   getBikes
 } from "../../common/apis/bike";
 import {
-    getPackages
-  } from "../../common/apis/packages";
+  getPackages
+} from "../../common/apis/packages";
 import {
   postDelivery, updateDelivery
 } from "../../common/apis/delivery";
 import Paper from "@mui/material/Paper";
 import "react-toastify/dist/ReactToastify.min.css";
 import PublishIcon from '@mui/icons-material/Publish';
-import { Person, LocationOn, CheckCircle, ArrowBack,ArrowForward } from '@mui/icons-material';
+import { Person, LocationOn, CheckCircle, ArrowBack, ArrowForward } from '@mui/icons-material';
 import { getFromLocalStorage } from '../../common/utils/LocalStorage';
 
 
@@ -180,13 +180,13 @@ function ColorlibStepIcon(props) {
 const steps = ['Basic Details', 'Address', 'Submit Application'];
 
 const containerStyle = {
-    width: '800px',
-    height: '600px'
+  width: '800px',
+  height: '600px'
 };
 
 const center = {
-    lat: 1.2921,
-    lng: 36.8219
+  lat: 1.2921,
+  lng: 36.8219
 };
 
 const NewDelivery = () => {
@@ -207,38 +207,38 @@ const NewDelivery = () => {
 
   const handleMapClick = async (event) => {
     const location = {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng()
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng()
     };
-    
+
     if (!source) {
-        setSource(location);
-        formik.setFieldValue('sourceAddress', `${location.lat},${location.lng}`);
+      setSource(location);
+      formik.setFieldValue('sourceAddress', `${location.lat},${location.lng}`);
     } else {
-        setDestination(location);
-        formik.setFieldValue('destinationAddress', `${location.lat},${location.lng}`);
-        calculateDistance(source, location);
+      setDestination(location);
+      formik.setFieldValue('destinationAddress', `${location.lat},${location.lng}`);
+      calculateDistance(source, location);
     }
-};
+  };
 
   const calculateDistance = (source, destination) => {
-      const radlat1 = Math.PI * source.lat / 180;
-      const radlat2 = Math.PI * destination.lat / 180;
-      const theta = source.lng - destination.lng;
-      const radtheta = Math.PI * theta / 180;
-      let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-      dist = Math.acos(dist);
-      dist = dist * 180 / Math.PI;
-      dist = dist * 60 * 1.1515 * 1.609344; // Distance in kilometers
-      setDistance(dist);
-      formik.setFieldValue('distance', dist);
-      calculateCost(dist);
+    const radlat1 = Math.PI * source.lat / 180;
+    const radlat2 = Math.PI * destination.lat / 180;
+    const theta = source.lng - destination.lng;
+    const radtheta = Math.PI * theta / 180;
+    let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    dist = Math.acos(dist);
+    dist = dist * 180 / Math.PI;
+    dist = dist * 60 * 1.1515 * 1.609344; // Distance in kilometers
+    setDistance(dist);
+    formik.setFieldValue('distance', dist);
+    calculateCost(dist);
   };
 
   const calculateCost = (distance) => {
-      const ratePerKm = 2; // Define your cost per kilometer      
-      setCost(distance * ratePerKm);
-      formik.setFieldValue('cost', distance * ratePerKm);
+    const ratePerKm = 2; // Define your cost per kilometer      
+    setCost(distance * ratePerKm);
+    formik.setFieldValue('cost', distance * ratePerKm);
   };
 
   const postMutation = useMutation({ mutationFn: postDelivery });
@@ -255,7 +255,7 @@ const NewDelivery = () => {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-  const { data: bikeData} = useQuery({
+  const { data: bikeData } = useQuery({
     queryKey: 'getBikes',
     queryFn: getBikes,
 
@@ -281,13 +281,13 @@ const NewDelivery = () => {
     },
     validationSchema: Yup.object().shape({
       packageId: Yup.string().required("Required"),
-      bikeId: Yup.string().required("Required"),      
+      bikeId: Yup.string().required("Required"),
     }),
 
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       console.log(values);
       try {
-console.log("values",values);
+        console.log("values", values);
         if (row?.id) {
           values.id = row.id;
 
@@ -336,8 +336,6 @@ console.log("values",values);
               justifyContent="flex-start"
               alignItems="flex-start"
             >
-
-
               <Grid item sm={6}>
                 <FormControl sx={{ m: 1, width: "100%", marginBottom: "5px" }} size="medium">
                   <FormLabel
@@ -366,15 +364,15 @@ console.log("values",values);
                     my={2}
                   >
                     {bikeData?.data?.map((bikeType) => (
-                                    <MenuItem key={bikeType.id} value={bikeType.id}>
-                                        {bikeType.model}
-                                    </MenuItem>
+                      <MenuItem key={bikeType.id} value={bikeType.id}>
+                        {bikeType.model}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
               </Grid>
-              </Grid>
-              <Grid
+            </Grid>
+            <Grid
               container
               spacing={5}
               direction="row"
@@ -409,9 +407,9 @@ console.log("values",values);
                     my={2}
                   >
                     {packageData?.data?.map((packaged) => (
-                                    <MenuItem key={packaged.id} value={packaged.id}>
-                                        {packaged.type}
-                                    </MenuItem>
+                      <MenuItem key={packaged.id} value={packaged.id}>
+                        {packaged.type}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -422,42 +420,42 @@ console.log("values",values);
       case 1:
         return (
           <Box style={{ maxWidth: '100%', margin: 'auto', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-    <LoadScript googleMapsApiKey="AIzaSyAATO2CjK3qI-fH-tMchgsQMI9oaOt2Tc0">
-        <GoogleMap
-            mapContainerStyle={{ width: '100%', height: '400px' }}
-            center={center}
-            zoom={7}
-            options={{
-                styles: mapStyles, // your custom map style array
-                disableDefaultUI: true, // disable default map UI
-                zoomControl: true, // add zoom control
-                mapTypeControl: true, // add map type control
-            }}
-            onClick={handleMapClick}
-        >
-            {source && <Marker position={source} label="S" icon={{path: MyLocationIcon,scale: 7, fillColor: '#1976d2', fillOpacity:1,strokeWeight:2}} />}
-            {destination && <Marker position={destination} label="D" icon={{path: LocationOnIcon,scale: 7, fillColor: '#ff4081', fillOpacity:1,strokeWeight:2}} />}
-        </GoogleMap>
-    </LoadScript>
-    <Box mt={2} style={{ textAlign: 'center' }}>
-        <Typography variant="h6" style={{ margin: '10px 0' }}>Distance: <strong>{distance.toFixed(2)} km</strong></Typography>
-        <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>Ksh. {cost.toFixed(2)}</strong></Typography>
-    </Box>
-    <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={() => { setSource(null); setDestination(null); setDistance(0); setCost(0); }}
-        style={{ display: 'block', margin: '20px auto' }}
-    >
-        Reset
-    </Button>
-</Box>
+            <LoadScript googleMapsApiKey="">
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '400px' }}
+                center={center}
+                zoom={7}
+                options={{
+                  styles: mapStyles,
+                  disableDefaultUI: true,
+                  zoomControl: true,
+                  mapTypeControl: true,
+                }}
+                onClick={handleMapClick}
+              >
+                {source && <Marker position={source} label="S" icon={{ path: MyLocationIcon, scale: 7, fillColor: '#1976d2', fillOpacity: 1, strokeWeight: 2 }} />}
+                {destination && <Marker position={destination} label="D" icon={{ path: LocationOnIcon, scale: 7, fillColor: '#ff4081', fillOpacity: 1, strokeWeight: 2 }} />}
+              </GoogleMap>
+            </LoadScript>
+            <Box mt={2} style={{ textAlign: 'center' }}>
+              <Typography variant="h6" style={{ margin: '10px 0' }}>Distance: <strong>{distance.toFixed(2)} km</strong></Typography>
+              <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>${cost.toFixed(2)}</strong></Typography>
+            </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => { setSource(null); setDestination(null); setDistance(0); setCost(0); }}
+              style={{ display: 'block', margin: '20px auto' }}
+            >
+              Reset
+            </Button>
+          </Box>
 
         );
       case 2:
         return (
           <Box>
-            
+
           </Box>
         );
       default:
@@ -469,7 +467,6 @@ console.log("values",values);
   return (
     <React.Fragment>
       <ToastContainer />
-
       <Grid container spacing={3} alignItems="stretch" >
         <Grid item md={12} style={{ display: "flex", width: "100%" }}>
           <Paper
@@ -499,9 +496,12 @@ console.log("values",values);
               <Typography gutterBottom>Add New Delivery details below</Typography>
             </Grid>
             <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
-              {steps.map((label) => (
+              {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+                  <StepLabel StepIconComponent={ColorlibStepIcon} style={{
+                    color: activeStep === index ? '#1976d2' : '#bdbdbd', // Active step in blue, others in grey
+                    fontWeight: activeStep === index ? 'bold' : 'normal', // Bold for active step
+                  }}>{label}</StepLabel>
                 </Step>
               ))}
             </Stepper>
@@ -517,7 +517,7 @@ console.log("values",values);
 
                       {renderStepContent(activeStep)}
                       <div>
-                      <Grid item xl={12} xs={12} md={12} sx={{marginTop:'50px'}}>
+                        <Grid item xl={12} xs={12} md={12} sx={{ marginTop: '50px' }}>
                           <Grid
                             container
                             direction="row"
@@ -532,9 +532,9 @@ console.log("values",values);
                                 backgroundColor: '#333333',
                               }}
                               startIcon={<ArrowBack />}
-                              disabled={activeStep === 0} 
+                              disabled={activeStep === 0}
                               onClick={handleBack}
-                              
+
                             >
                               Back
                             </Button>
@@ -553,14 +553,11 @@ console.log("values",values);
                               onClick={handleNext}
                               type={activeStep === steps.length - 1 ? 'submit' : 'button'}
                             >
-                             {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                              {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
                             </Button>
                           </Grid>
                         </Grid>
-                      
-                      
                       </div>
-                      
                     </>
                   )}
                 </CardContent>

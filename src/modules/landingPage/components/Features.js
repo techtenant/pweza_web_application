@@ -22,24 +22,24 @@ const items = [
     title: 'Payment Processing',
     description:
       'Automatically update order statuses upon successful payment processing.',
-    imageLight: 'url("/static/images/templates/templates-images/dash-light.png")',
-    imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+    imageLight: 'url("/payment.jpg")',
+    
   },
   {
     icon: <EdgesensorHighRoundedIcon />,
     title: 'Location Services',
     description:
       'Easily select and verify your current location using integrated geolocation APIs such as Google Maps',
-    imageLight: 'url("/static/images/templates/templates-images/mobile-light.png")',
-    imageDark: 'url("/static/images/templates/templates-images/mobile-dark.png")',
+    imageLight: 'url("/location.png")',
+   
   },
   {
     icon: <DevicesRoundedIcon />,
     title: 'Order Management',
     description:
       'Design and manage product details with ease, including descriptions, dimensions, and categories.',
-    imageLight: 'url("/static/images/templates/templates-images/devices-light.png")',
-    imageDark: 'url("/static/images/templates/templates-images/devices-dark.png")',
+    imageLight: 'url("/ai.jpg")',
+   
   },
 ];
 
@@ -264,9 +264,9 @@ export default function Features() {
                 height: 500,
                 backgroundSize: 'contain',
                 backgroundImage: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? items[selectedItemIndex].imageLight
-                    : items[selectedItemIndex].imageDark,
+                  
+                     items[selectedItemIndex].imageLight
+                    
               }}
             />
           </Card>
