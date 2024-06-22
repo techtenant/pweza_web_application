@@ -78,7 +78,7 @@ const FormGrid = styled('div')(() => ({
 }));
 
 export default function PaymentForm() {
-  const [paymentType, setPaymentType] = React.useState('creditCard');
+  const [paymentType, setPaymentType] = React.useState('bankTransfer');
   const [cardNumber, setCardNumber] = React.useState('');
   const [cvv, setCvv] = React.useState('');
   const [expirationDate, setExpirationDate] = React.useState('');
@@ -124,6 +124,32 @@ export default function PaymentForm() {
             gap: 2,
           }}
         >
+             <Card selected={paymentType === 'bankTransfer'}>
+            <CardActionArea
+              onClick={() => setPaymentType('bankTransfer')}
+              sx={{
+                '.MuiCardActionArea-focusHighlight': {
+                  backgroundColor: 'transparent',
+                },
+                '&:focus-visible': {
+                  backgroundColor: 'action.hover',
+                },
+              }}
+            >
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AccountBalanceRoundedIcon
+                  fontSize="small"
+                  sx={(theme) => ({
+                    color: theme.palette.mode === 'light' ? 'grey.400' : 'grey.600',
+                    ...(paymentType === 'bankTransfer' && {
+                      color: 'primary.main',
+                    }),
+                  })}
+                />
+                <Typography fontWeight="medium">MPESA</Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
           <Card selected={paymentType === 'creditCard'}>
             <CardActionArea
               onClick={() => setPaymentType('creditCard')}
@@ -150,34 +176,53 @@ export default function PaymentForm() {
               </CardContent>
             </CardActionArea>
           </Card>
-          <Card selected={paymentType === 'bankTransfer'}>
-            <CardActionArea
-              onClick={() => setPaymentType('bankTransfer')}
-              sx={{
-                '.MuiCardActionArea-focusHighlight': {
-                  backgroundColor: 'transparent',
-                },
-                '&:focus-visible': {
-                  backgroundColor: 'action.hover',
-                },
-              }}
-            >
-              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AccountBalanceRoundedIcon
-                  fontSize="small"
-                  sx={(theme) => ({
-                    color: theme.palette.mode === 'light' ? 'grey.400' : 'grey.600',
-                    ...(paymentType === 'bankTransfer' && {
-                      color: 'primary.main',
-                    }),
-                  })}
-                />
-                <Typography fontWeight="medium">Bank account</Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
+       
         </RadioGroup>
       </FormControl>
+      {paymentType === 'bankTransfer' && (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          <Alert severity="warning" icon={<WarningRoundedIcon />}>
+            Your order will be processed once we receive the funds.
+          </Alert>
+          <Typography variant="subtitle1" fontWeight="medium">
+            MPESA PAY BILL NUMBER
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+           Go to your Mpesa Account, click lipa na mpesa, select Paybill
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Typography variant="body1" color="text.secondary">
+              PayBill Number: 123456
+            </Typography>
+            <Typography variant="body1" fontWeight="medium">
+              
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Typography variant="body1" color="text.secondary">
+              Account number: xyxyx
+            </Typography>
+            <Typography variant="body1" fontWeight="medium">
+              123456789
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Typography variant="body1" color="text.secondary">
+              Routing number:
+            </Typography>
+            <Typography variant="body1" fontWeight="medium">
+              987654321
+            </Typography>
+          </Box>
+        </Box>
+      )}
+
       {paymentType === 'creditCard' && (
         <Box
           sx={{
@@ -267,49 +312,7 @@ export default function PaymentForm() {
         </Box>
       )}
 
-      {paymentType === 'bankTransfer' && (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          <Alert severity="warning" icon={<WarningRoundedIcon />}>
-            Your order will be processed once we receive the funds.
-          </Alert>
-          <Typography variant="subtitle1" fontWeight="medium">
-            Bank account
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Please transfer the payment to the bank account details shown below.
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Bank:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              Mastercredit
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Account number:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              123456789
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Typography variant="body1" color="text.secondary">
-              Routing number:
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              987654321
-            </Typography>
-          </Box>
-        </Box>
-      )}
+     
     </Stack>
   );
 }

@@ -4,8 +4,6 @@ import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 're
 import './App.css';
 import SignUp from './modules/sign-up/SignUp'
 import SignIn from './modules/sign-in/SignIn';
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
 import LandingPage from './modules/landingPage/LandingPage';
 import Layout from './common/layout/Layout';
 import Dashboard from './modules/dashboard/Dashboard';
@@ -13,10 +11,17 @@ import Packages from './modules/packages/Packages';
 import BikeTypes from './modules/bikes/BikeTypes';
 import Bikes from './modules/bikes/Bikes';
 import DeliveryList from './modules/delivery/deliveryList';
+import PaymentList from './modules/payments/payments';
+import Checkout from './modules/payments/Checkout';
 import NewDelivery from './modules/delivery/NewDelivery';
 import UserAccount from './modules/account/AccountPage';
+import ProductList from './modules/product/Product';
+import CreateProduct from './modules/product/CreateProduct';
 import FeedBackPage from './modules/feedback/FeedBackPage';
 import SettingsTable from './modules/settings/Settings';
+import OrderTrackingPage from './modules/orderTracking/OrderTrackingPage';
+import NotificationsList from './modules/rider/notifications/Notifications';
+
 import { getFromLocalStorage, removeItem } from './common/utils/LocalStorage';
 
 
@@ -90,7 +95,13 @@ function App() {
                   <Route path="account" element={<UserAccount />} />
                   <Route path="feedback" element={<FeedBackPage />} />  
                   <Route path="settings" element={<SettingsTable />} />  
-                  <Route path="checkout" element={<NewDelivery />} />                  
+                  <Route path="checkout" element={<NewDelivery />} />     
+                  <Route path="products" element={<ProductList />} />     
+                  <Route path="newProduct" element={<CreateProduct />} />  
+                  <Route path="payment" element={<PaymentList />} />  
+                  <Route path="paymentcheckout" element={<Checkout />} /> 
+                  <Route path ="orderTracking" element={< OrderTrackingPage/>} />
+                  <Route path ="notifications" element={< NotificationsList/>} />                
                 </Routes>
               </Layout>
               </ProtectedRoute>

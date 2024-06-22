@@ -15,6 +15,8 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
+import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 
 export const mainListItems = (
   <React.Fragment>
@@ -48,13 +50,19 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Bikes" />
     </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/products">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <ProductionQuantityLimitsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Products" />
+    </ListItemButton>
     <ListItemButton component={Link} to="/pweza/delivery">
       <ListItemIcon sx={{ color: 'white' }}>
         <DeliveryDiningIcon />
       </ListItemIcon>
       <ListItemText primary="Product Delivery" />
     </ListItemButton>
-    <ListItemButton >
+    <ListItemButton component={Link} to="/pweza/payment">
       <ListItemIcon sx={{ color: 'white' }}>
         <CreditCardIcon />
       </ListItemIcon>
@@ -65,6 +73,12 @@ export const mainListItems = (
         <FeedbackIcon />
       </ListItemIcon>
       <ListItemText primary="UserFeedback" />
+    </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/notifications">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <CircleNotificationsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Notifications" />
     </ListItemButton>
   </React.Fragment>
 );

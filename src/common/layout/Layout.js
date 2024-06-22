@@ -17,6 +17,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from '../../modules/dashboard/listItems';
 import AccountPopover from './account-popover';
+import Notifications from './notifications';
 
 
 
@@ -105,13 +106,39 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const defaultTheme = createTheme();
 
+
 function Layout({ children }) {
   const [open, setOpen] = React.useState(false);
-  const theme = useTheme();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notifications, setNotifications] = React.useState([
+    { id: 1, senderName: 'Jie Yan',  jobTitle: 'Remote React / React Native Developer', date: 'Jun 21', time: '09:12 AM', read: false },
+    { id: 2, senderName: 'Fran Perez',  jobTitle: 'Senior Golang Backend Engineer', date: 'Jun 17', time: '11:01 AM', read: true },
+    { id: 3, senderName: 'System',  jobTitle: 'Logistics management is now available', date: 'Jun 15', time: '09:15 AM', read: false },
+    // Add more notifications as needed
+  ]);
+
+  const handleClickNotifications = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseNotifications = () => {
+    setAnchorEl(null);
+  };
+
+  const markAsRead = (id) => {
+    const updatedNotifications = notifications.map((notif) =>
+      notif.id === id ? { ...notif, read: true } : notif
+    );
+    setNotifications(updatedNotifications);
+  };
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const unreadNotifications = notifications.filter((notif) => !notif.read);
+  const readNotifications = notifications.filter((notif) => notif.read);
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -143,8 +170,20 @@ function Layout({ children }) {
             <MenuIcon />
           </IconButton>
           <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '70px' }} />
-        
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton color="inherit" onClick={handleClickNotifications}>
+                <Badge badgeContent={unreadNotifications.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <Notifications
+                anchorEl={anchorEl}
+                onClose={handleCloseNotifications}
+                notifications={notifications}
+                markAsRead={markAsRead}
+              />
           <AccountPopover />
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={!open}>
