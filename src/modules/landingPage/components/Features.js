@@ -30,7 +30,7 @@ const items = [
     title: 'Location Services',
     description:
       'Easily select and verify your current location using integrated geolocation APIs such as Google Maps',
-    imageLight: 'url("/location.png")',
+    imageLight: 'url("/location.jpg")',
    
   },
   {
@@ -263,10 +263,9 @@ export default function Features() {
                 width: 420,
                 height: 500,
                 backgroundSize: 'contain',
-                backgroundImage: (theme) =>
-                  
-                     items[selectedItemIndex].imageLight
-                    
+                backgroundRepeat: 'no-repeat',
+                backgroundImage: (theme) =>                  
+                     items[selectedItemIndex].imageLight                    
               }}
             />
           </Card>

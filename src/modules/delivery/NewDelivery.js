@@ -420,7 +420,7 @@ const NewDelivery = () => {
       case 1:
         return (
           <Box style={{ maxWidth: '100%', margin: 'auto', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <LoadScript googleMapsApiKey="">
+            <LoadScript googleMapsApiKey="AIzaSyAATO2CjK3qI-fH-tMchgsQMI9oaOt2Tc0">
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '400px' }}
                 center={center}
