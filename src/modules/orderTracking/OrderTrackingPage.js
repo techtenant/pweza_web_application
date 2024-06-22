@@ -80,7 +80,7 @@ const OrderTrackingPage = () => {
             <Typography variant="h5" gutterBottom>
               Order Tracking
             </Typography>
-            <LoadScript googleMapsApiKey="AIzaSyAATO2CjK3qI-fH-tMchgsQMI9oaOt2Tc0">
+            <LoadScript googleMapsApiKey="AIzaSyAuWt5mMOgPSby9vFXFfti_LEDRuV97-Eg">
               <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={{ lat: trackingData.lat, lng: trackingData.lng }}

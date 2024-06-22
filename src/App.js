@@ -21,6 +21,9 @@ import FeedBackPage from './modules/feedback/FeedBackPage';
 import SettingsTable from './modules/settings/Settings';
 import OrderTrackingPage from './modules/orderTracking/OrderTrackingPage';
 import NotificationsList from './modules/rider/notifications/Notifications';
+import NavigationPage from './modules/rider/notifications/NavigationPage';
+import PackageConfirmation from './modules/rider/notifications/Confirmation';
+
 
 import { getFromLocalStorage, removeItem } from './common/utils/LocalStorage';
 
@@ -101,7 +104,9 @@ function App() {
                   <Route path="payment" element={<PaymentList />} />  
                   <Route path="paymentcheckout" element={<Checkout />} /> 
                   <Route path ="orderTracking" element={< OrderTrackingPage/>} />
-                  <Route path ="notifications" element={< NotificationsList/>} />                
+                  <Route path ="notifications" element={< NotificationsList/>} />   
+                  <Route path ="navigation" element={< NavigationPage/>} />   
+                  <Route path ="confirmation" element={< PackageConfirmation/>} />                
                 </Routes>
               </Layout>
               </ProtectedRoute>

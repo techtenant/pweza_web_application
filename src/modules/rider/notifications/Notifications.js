@@ -23,8 +23,8 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 
 const deldata = [
-    { id: 1, distance: 10, cost: 50, sourceAddress: '123 Main St', destinationAddress: '456 Elm St', status: '' },
-    { id: 2, distance: 20, cost: 100, sourceAddress: '789 Maple St', destinationAddress: '101 Pine St', status: '' },
+    { id: 1, distance: 10, cost: 50, sourceAddress: '123 Main St', destinationAddress: '456 Elm St', status: 'Accepted' },
+    { id: 2, distance: 20, cost: 100, sourceAddress: '789 Maple St', destinationAddress: '101 Pine St', status: 'Rejected' },
 ];
 
 const getStatusChip = (status) => {
@@ -94,7 +94,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
         };
 
         const handleNavigate = (id) => {
-            navigate(`/pweza/orderTracking`);
+            navigate(`/pweza/navigation`);
         }
     
         const columns = useMemo(() => [
