@@ -11,15 +11,15 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation,useQuery } from "@tanstack/react-query";
 import ToggleButton from '@mui/material/ToggleButton';
-import { postSignup } from "../../common/apis/account";
+import { postSignup, getRoles } from "../../common/apis/account";
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { Card as MuiCard } from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { InputAdornment,IconButton } from '@mui/material';
+import { InputAdornment,IconButton,MenuItem,Select } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -219,6 +219,7 @@ export default function SignUp() {
         lastName:data.get('lastName'),
         userName:data.get('userName'),
         phone:data.get('phone'),
+        roles: [data.get('role')],
       }
 
       postMutation.mutateAsync(values).then(response => {
@@ -235,8 +236,8 @@ export default function SignUp() {
 
        
     }).catch(error =>{
-      console.log(error.message);
-      toast.error(`An error occurred while creating your account. Please try again later.${error.message}`, {
+      console.log(error);
+      toast.error(`An error occurred while creating your account. Please try again later.${error.response.data}`, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -264,6 +265,14 @@ export default function SignUp() {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  
+  const { data: rolesData } = useQuery({
+    queryKey: 'userRoles',
+    queryFn: getRoles,
+
+  });
+
 
   return (
     <ThemeProvider theme={showCustomTheme ? SignUpTheme : defaultTheme}>
@@ -407,6 +416,34 @@ export default function SignUp() {
                   }}
                 />
               </FormControl>
+              <FormControl >
+                  <FormLabel
+                    style={{
+                      fontSize: "16px",
+                      color: "#000",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Roles
+                  </FormLabel>
+                  <Select
+                name="role"
+                id="role"
+                fullWidth
+                variant="outlined"
+                sx={{
+                    marginTop: 2,
+                    '& legend': { display: 'none' },
+                    '& .MuiInputLabel-shrink': { opacity: 0, transition: "all 0.2s ease-in" }
+                }}
+            >
+                {rolesData?.data?.map((role) => (
+                    <MenuItem key={role.name} value={role.name}>
+                        {role.name}
+                    </MenuItem>
+                ))}
+            </Select>
+                </FormControl>
               <FormControlLabel
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label="I want to receive updates via email."

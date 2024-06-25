@@ -150,7 +150,7 @@ export default function SignIn() {
       postMutation.mutateAsync(values).then(response => {
         // Extract role and other user details from login response
         const { role, email, staffId } = response;
-
+        console.log(response.data);
         // Store user information in local storage
         setLocalStorage('user', response.data);
 
@@ -158,7 +158,7 @@ export default function SignIn() {
         window.location.href = '/pweza/dashboard'; 
       
     }).catch(error =>{
-      console.log(error);
+      
       toast.error(`An error occurred. Please try again later.${error}`, {
         position: "top-right",
         autoClose: 5000,

@@ -6,7 +6,7 @@ const LatestProductsTable = ({ products }) => {
   return (
     <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
       <Typography variant="h6" sx={{ p: 2 }}>
-       Order History
+        New SME Customers
       </Typography>
       <Table sx={{ minWidth: 650 }} aria-label="latest products table">
         <TableHead>

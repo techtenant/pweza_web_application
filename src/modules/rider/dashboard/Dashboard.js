@@ -11,26 +11,25 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
-import HistoryIcon from '@mui/icons-material/History';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import TimerIcon from '@mui/icons-material/Timer';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import GroupsIcon from '@mui/icons-material/Groups';
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import TimerIcon from '@mui/icons-material/Timer';
-import { mainListItems, secondaryListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import LatestOrders from './Orders';
 import PieChart from './PieChart';
-import OrderSummaryGraph from './OrderSummaryGraph';
 import LatestProductsTable from './Products'
+import OrderSummaryGraph from './OrderSummaryGraph';
 
 function Copyright(props) {
   return (
@@ -51,11 +50,6 @@ const salesData = {
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   thisYear: [15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000],
   lastYear: [12000, 18000, 22000, 28000, 32000, 36000, 42000, 48000, 52000, 58000, 62000, 68000]
-};
-
-const data = {
-  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-  orders: [65, 59, 80, 81, 56, 55, 40]
 };
 
 const pieChartData = {
@@ -130,24 +124,29 @@ const latestOrdersData = [
 ];
 
 const cardsData = [
-  { title: 'Active Orders', value: 'Ksh. 24,000', icon: ShoppingBagIcon, color: '#1976d2' },
-  { title: 'Order History', value: '1,600', icon: HistoryIcon, color: '#dc004e' },
-  { title: 'Average Delivery Time', value: '2 hrs', icon: TimerIcon, color: '#2e7d32' },
-  { title: 'Total Spendings', value: 'Ksh. 35,000', icon: AttachMoneyIcon, color: '#ffa000' },
+  { title: 'Total Deliveries', value: 'Ksh. 24,000', icon: DeliveryDiningIcon, color: '#1976d2' },
+  { title: 'Earnings', value: '1,600', icon: MonetizationOnIcon, color: '#dc004e' },
+  { title: ' Average Delivery Time', value: '2 hrs', icon: TimerIcon, color: '#2e7d32' },
+  { title: 'Ratings', value: '4.3', icon: StarHalfIcon, color: '#ffa000' },
 ];
+
+const data = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  orders: [65, 59, 80, 81, 56, 55, 40]
+};
 
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function RiderDashboard() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-
+  console.log("dashboarde orders", latestOrdersData);
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container alignItems="stretch">
@@ -160,7 +159,7 @@ export default function Dashboard() {
                 <Deposits key={index} {...card} sx={{ flexGrow: 1, minWidth: '100%', maxWidth: '100%' }} /> // Adjusted styles for card
               ))}
             </Grid>
-            <Grid item xs={12} md={6} lg={9}>
+            <Grid item xs={12} md={8} lg={9}>
               <Paper
                 sx={{
                   p: 2,

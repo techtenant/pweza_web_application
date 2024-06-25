@@ -32,6 +32,9 @@ import {
   getBikes
 } from "../../common/apis/bike";
 import {
+  gett
+} from "../../common/apis/bike";
+import {
   getPackages
 } from "../../common/apis/packages";
 import {
@@ -266,11 +269,16 @@ const NewDelivery = () => {
     queryFn: getPackages,
 
   });
+  const { data: ridersData } = useQuery({
+    queryKey: 'getRiders',
+    queryFn: getPackages,
+
+  });
   const formik = useFormik({
 
     initialValues: {
       userId: row?.userId || account.id,
-      riderId: row?.riderId || account.id,
+      riderId: row?.riderId || "",
       bikeId: row?.bikeId || "",
       distance: row?.distance || 0,
       cost: row?.cost || 0,
@@ -395,6 +403,49 @@ const NewDelivery = () => {
                     label="packageId"
                     value={formik.values.packageId}
                     error={Boolean(formik.touched.packageId && formik.errors.packageId)}
+                    fullWidth
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    variant="outlined"
+                    sx={{
+                      marginTop: 2,
+                      '& legend': { display: 'none' },
+                      '& .MuiInputLabel-shrink': { opacity: 0, transition: "all 0.2s ease-in" }
+                    }}
+                    my={2}
+                  >
+                    {packageData?.data?.map((packaged) => (
+                      <MenuItem key={packaged.id} value={packaged.id}>
+                        {packaged.type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="flex-start"
+            >
+              <Grid item sm={6}>
+                <FormControl sx={{ m: 1, width: "100%", marginBottom: "5px" }} size="medium">
+                  <FormLabel
+                    style={{
+                      fontSize: "16px",
+                      color: "#000",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Rider
+                  </FormLabel>
+                  <Select
+                    name="riderId"
+                    label="riderId"
+                    value={formik.values.riderId}
+                    error={Boolean(formik.touched.riderId && formik.errors.riderId)}
                     fullWidth
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}

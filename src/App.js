@@ -7,6 +7,7 @@ import SignIn from './modules/sign-in/SignIn';
 import LandingPage from './modules/landingPage/LandingPage';
 import Layout from './common/layout/Layout';
 import Dashboard from './modules/dashboard/Dashboard';
+import RiderDashboard from './modules/rider/dashboard/Dashboard';
 import Packages from './modules/packages/Packages';
 import BikeTypes from './modules/bikes/BikeTypes';
 import Bikes from './modules/bikes/Bikes';
@@ -15,6 +16,7 @@ import PaymentList from './modules/payments/payments';
 import Checkout from './modules/payments/Checkout';
 import NewDelivery from './modules/delivery/NewDelivery';
 import UserAccount from './modules/account/AccountPage';
+import UserRoles from './modules/account/UserRoles';
 import ProductList from './modules/product/Product';
 import CreateProduct from './modules/product/CreateProduct';
 import FeedBackPage from './modules/feedback/FeedBackPage';
@@ -91,10 +93,12 @@ function App() {
               <Layout>
                 <Routes>
                   <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="riderdashboard" element={<RiderDashboard />} />
                   <Route path="packages" element={<Packages />} />
                   <Route path="biketypes" element={<BikeTypes />} />
                   <Route path="bikes" element={<Bikes />} />
                   <Route path="delivery" element={<DeliveryList />} />
+                  <Route path="roles" element={<UserRoles />} />
                   <Route path="account" element={<UserAccount />} />
                   <Route path="feedback" element={<FeedBackPage />} />  
                   <Route path="settings" element={<SettingsTable />} />  

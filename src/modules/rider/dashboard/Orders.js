@@ -56,7 +56,7 @@ const LatestOrders = ({ orders }) => {
   return (
     <StyledTableContainer component={Paper}>
       <Typography variant="h6" sx={{ p: 2, textAlign: 'center', fontWeight: 'medium' }}>
-        Active Orders
+        Latest Orders
       </Typography>
       <Table sx={{ minWidth: 650 }} aria-label="latest orders table">
         <TableHead>
