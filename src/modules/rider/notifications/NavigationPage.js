@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Box, Button, Typography, Paper } from '@mui/material';
+import { Container, Box, Button, Typography, Paper, List, ListItem, ListItemText, Divider,Grid } from '@mui/material';
 import MapView from './MapView';
 
 const NavigationPage = () => {
   const [navigationStarted, setNavigationStarted] = useState(false);
   const [estimatedTime, setEstimatedTime] = useState('');
+  const [arrivalConfirmed, setArrivalConfirmed] = useState(false);
+
   const navigate = useNavigate();
 
   const handleStartNavigation = () => {
@@ -15,40 +17,77 @@ const NavigationPage = () => {
 
   const handleNavigate = (id) => {
     navigate(`/pweza/confirmation`);
-}
+  };
 
   useEffect(() => {
     if (navigationStarted) {
       const timer = setTimeout(() => {
         alert('You have arrived at the pickup location.');
-      }, 15000); // Simulate arrival after 15 seconds
+        setArrivalConfirmed(true);
+      }, 1500); // Simulate arrival after 15 seconds
       return () => clearTimeout(timer);
     }
   }, [navigationStarted]);
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Navigate to Pickup Location
-        </Typography>
-        <MapView />
-        <Box display="flex" justifyContent="center" my={2}>
-          <Button variant="contained" color="primary" onClick={handleStartNavigation} sx={{ px: 4, py: 2 }}>
-            Start Navigation
-          </Button>
-        </Box>
-        {navigationStarted && (
-          <Box textAlign="center" my={2}>
-            <Typography variant="h6">Following the Route...</Typography>
-            <Typography variant="body1">Estimated time to destination: {estimatedTime}</Typography>
+    <Grid container alignItems="stretch">
+                <Grid item md={12} style={{ marginTop: "50px", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
+    <Container maxWidth="lg" sx={{ display: 'flex', py: 4 }}>
+      <Box sx={{ width: '30%', pr: 4 }}>
+        <Button variant="contained"  disabled={!arrivalConfirmed} onClick={handleNavigate} color="primary" sx={{ mb: 2, width: '100%' }}>
+          Confirm Product
+        </Button>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Typography variant="h6" gutterBottom>
+            VE-004
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Brooklyn, New York, United States
+          </Typography>
+          <Box sx={{ my: 2 }}>
+            <Typography variant="body2" gutterBottom>
+              Temperature (good)
+            </Typography>
+            <Typography variant="h4">6°C</Typography>
           </Box>
-        )}
-      </Paper>
-      <Button variant="contained" color="primary" onClick={handleNavigate} >
-           confirm product
-          </Button>
+          <List>
+            <ListItem>
+              <ListItemText primary="Arrived" secondary="Jun 27, 2024 12:22 AM" />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText primary="Out for delivery" secondary="Jun 26, 2024 11:57 PM" />
+            </ListItem>
+            <Divider />
+            <ListItem>
+              <ListItemText primary="Tracking number created" secondary="Jun 26, 2024 10:10 PM" />
+            </ListItem>
+          </List>
+        </Paper>
+      </Box>
+      <Box sx={{ width: '70%' }}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+          <Typography variant="h4" gutterBottom>
+            Navigate to Pickup Location
+          </Typography>
+          <MapView />
+          <Box display="flex" justifyContent="center" my={2}>
+            <Button variant="contained" color="primary" onClick={handleStartNavigation} sx={{ px: 4, py: 2 }}>
+              Start Navigation
+            </Button>
+          </Box>
+          {navigationStarted && (
+            <Box textAlign="center" my={2}>
+              <Typography variant="h6">Following the Route...</Typography>
+              <Typography variant="body1">Estimated time to destination: {estimatedTime}</Typography>
+            </Box>
+          )}
+        </Paper>
+      
+      </Box>
     </Container>
+    </Grid>
+    </Grid>
   );
 };
 

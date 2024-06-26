@@ -26,6 +26,8 @@ const getUserRole = () => {
   console.log("ACCOUNT",account);
   return account ? account.roles : null;
 };
+
+const userRole = getUserRole();
  
 const handleLogout = () => {
   // Remove user data from local storage
@@ -33,13 +35,12 @@ const handleLogout = () => {
  
  
 };
- 
 
 
 export const mainListItems = (
  
      <React.Fragment>
-     
+     {(userRole && (userRole.includes("Customer") || userRole.includes("Admin")) || userRole.includes("SuperAdmin")) && (
     <> 
      <ListItemButton component={Link} to="/pweza/dashboard">
       <ListItemIcon sx={{ color: 'white' }}>
@@ -72,8 +73,8 @@ export const mainListItems = (
       <ListItemText primary="UserFeedback" />
     </ListItemButton>
     </>
- 
-    
+     )}
+    {(userRole && (userRole.includes("Rider") || userRole.includes("Admin")) || userRole.includes("SuperAdmin")) && (
       <>
       <ListItemButton component={Link} to="/pweza/riderdashboard">
       <ListItemIcon sx={{ color: 'white' }}>
@@ -89,8 +90,10 @@ export const mainListItems = (
     </ListItemButton>
    </>
   
+     )}
 
-   
+
+{(userRole && (userRole.includes("Admin")) || userRole.includes("SuperAdmin")) && ( 
     <>
   <ListItemButton component={Link} to="/pweza/roles">
     <ListItemIcon sx={{ color: 'white' }}>
@@ -123,7 +126,7 @@ export const mainListItems = (
    <ListItemText primary="Bikes" />
  </ListItemButton>
    </>
-  
+       )}
   </React.Fragment>
 );
 
@@ -140,7 +143,7 @@ export const secondaryListItems = (
       <ListItemText primary="Account" />
     </ListItemButton>
     <ListItemButton component={Link} to="/sign-in" onClick={handleLogout}>
-      <ListItemIcon x={{ color: 'white' }}>
+      <ListItemIcon sx={{ color: 'white' }}>
         <LogoutIcon />
       </ListItemIcon>
       <ListItemText primary="Log Out" />

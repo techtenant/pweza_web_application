@@ -135,7 +135,20 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                 header: 'Actions',
                 size: 100,
                 Cell: ({ row }) => (
-                    <Button variant="contained" sx={{borderRadius: '10px'}} color="primary" onClick={() => handleOpen(row.original.id)}>
+                    <Button variant="contained" 
+                    sx={{
+                        borderRadius: '10px',
+                        backgroundColor: 'primary.main',
+                        color: 'white',
+                        textTransform: 'none',
+                        '&:hover': {
+                            backgroundColor: 'primary.dark',
+                        },
+                        padding: '10px 20px',
+                        fontSize: '16px',
+                        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                    }}
+                     onClick={() => handleOpen(row.original.id)}>
                         Accept/Reject
                     </Button>
                 )
@@ -146,7 +159,20 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                 size: 100,
                 Cell: ({ row }) => (
                     row.original.status === 'Accepted' ? (
-                        <Button variant="contained" color="primary" onClick={() => handleNavigate(row.original.id)}>
+                        <Button variant="contained" 
+                        sx={{
+                            borderRadius: '10px',
+                            backgroundColor: 'primary.main',
+                            color: 'white',
+                            textTransform: 'none',
+                            '&:hover': {
+                                backgroundColor: 'primary.dark',
+                            },
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                        }}
+                        onClick={() => handleNavigate(row.original.id)}>
                            View Pickup Location
                         </Button>
                     ) : null

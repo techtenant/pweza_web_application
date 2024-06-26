@@ -149,13 +149,16 @@ export default function SignIn() {
 
       postMutation.mutateAsync(values).then(response => {
         // Extract role and other user details from login response
-        const { role, email, staffId } = response;
+        const userData = response.data;
         console.log(response.data);
         // Store user information in local storage
         setLocalStorage('user', response.data);
 
-       
-        window.location.href = '/pweza/dashboard'; 
+        if (userData.roles && userData.roles.includes("Rider")) {
+          window.location.href = '/pweza/riderdashboard'; 
+      } else {
+          window.location.href = '/pweza/dashboard'; 
+      }
       
     }).catch(error =>{
       
