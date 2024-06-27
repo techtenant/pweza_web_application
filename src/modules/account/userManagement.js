@@ -45,7 +45,7 @@ const   UserManagement = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [formData, setFormData] = useState({ name: ''});
+  const [formData, setFormData] = useState({ firstName: '',lastName:'',email: '',phone: '',password:'',userName:'', roles:[]});
   const { data: userData, isLoading } = useQuery({
     queryKey: 'users',
     queryFn: getUsers
@@ -88,6 +88,7 @@ const   UserManagement = () => {
     event.preventDefault();
   };
 
+  console.log("users", userData);
 
   const columns = useMemo(
     () => [
@@ -113,6 +114,11 @@ const   UserManagement = () => {
         size: 80,
       }, 
       {
+        accessorKey: 'roles',
+        header: 'Role',
+        size: 80,
+      }, 
+      {
         header: 'Actions',
         Cell: ({ row }) => (
           <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -120,7 +126,7 @@ const   UserManagement = () => {
               color="primary"
               onClick={() => {
                 setSelectedRow(row.original);
-                setFormData({ name: row.original.name });
+                setFormData({ firstName: row.original.firstName,lastName: row.original.lastName,email:row.original.email,phone:row.original.phone,password: row.original.password,userName:row.original.userName , role:row.original.roles});
                 setEditOpen(true);
               }}
             >
@@ -145,19 +151,22 @@ const   UserManagement = () => {
   const handleEdit = async () => {
     if (selectedRow) {
       await updateMutation.mutateAsync({ ...selectedRow, ...formData });
-      setFormData({ name: ''}); // Reset form
+      setFormData({firstName: '',lastName:'',email: '',phone: '',password:'',userName:'',roles:''}); // Reset form
       handleEditClose(); // Close dialog after editing
     }
   };
-
   const handleFormChange = (event) => {
     const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    if (name === 'roles') {
+        setFormData({ ...formData, roles: [value] });
+    } else {
+        setFormData({ ...formData, [name]: value });
+    }
+};
 
   const handleCreate = async () => {
     await addMutation.mutateAsync(formData);
-    setFormData({ name: '' }); // Reset form
+    setFormData({firstName: '',lastName:'',email: '',phone: '',password:'',userName:'',roles:'' }); 
   };
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -190,7 +199,7 @@ const   UserManagement = () => {
         <ThemeProvider theme={tableTheme}>
           <MaterialReactTable
             columns={columns}
-            data={rolesData?.data || []}
+            data={userData?.data?.users || []}
             isLoading={isLoading}
             renderTopToolbarCustomActions={({ table }) => (
               <Box
@@ -227,7 +236,7 @@ const   UserManagement = () => {
           <DialogTitle>Add New User</DialogTitle>
           <DialogContent sx={{display: 'flex', flexDirection: 'column',gap:'1rem',minWidth:'400px'}}>
           <FormControl>
-                <FormLabel htmlFor="name">First Name</FormLabel>
+               
                 <TextField
               autoFocus
               variant="standard"
@@ -242,8 +251,7 @@ const   UserManagement = () => {
               }}
             />
               </FormControl>
-              <FormControl>
-                <FormLabel htmlFor="lastName">Last Name</FormLabel>
+              <FormControl>              
                 <TextField
                  variant="standard"
                  name="lastName"
@@ -258,8 +266,7 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="userName">User Name</FormLabel>
-                <TextField
+               <TextField
                  variant="standard"
                  name="userName"
                  label="User Name"
@@ -273,7 +280,7 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="name">Phone Number</FormLabel>
+               
                 <TextField
                  variant="standard"
                  name="phone"
@@ -288,7 +295,7 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
+               
                 <TextField
                  variant="standard"
                  name="email"
@@ -303,15 +310,18 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
+               
                 <TextField
                   required
                   fullWidth
                   name="password"
                   placeholder="••••••"
+                  label="Password"
                   type={showPassword ? 'text' : 'password'}
                   id="password"                 
-                  variant="standard"                  
+                  variant="standard"  
+                  value={formData.password}
+                  onChange={handleFormChange}                
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -339,12 +349,12 @@ const   UserManagement = () => {
                     Roles
                   </FormLabel>
                   <Select
-                name="role"
-                id="role"
-                value={formData.email}
+                name="roles"
+                id="roles"
+                value={formData.roles}
                 onChange={handleFormChange}
                 fullWidth
-                variant="outlined"
+                variant="standard"
                 sx={{
                     marginTop: 2,
                     '& legend': { display: 'none' },
@@ -369,7 +379,7 @@ const   UserManagement = () => {
           <DialogTitle>Edit User</DialogTitle>
           <DialogContent sx={{display: 'flex', flexDirection: 'column',gap:'1rem',minWidth:'400px'}}>
           <FormControl>
-                <FormLabel htmlFor="name">First Name</FormLabel>
+               
                 <TextField
               autoFocus
               variant="standard"
@@ -385,7 +395,7 @@ const   UserManagement = () => {
             />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="lastName">Last Name</FormLabel>
+               
                 <TextField
                  variant="standard"
                  name="lastName"
@@ -400,7 +410,7 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="userName">User Name</FormLabel>
+              
                 <TextField
                  variant="standard"
                  name="userName"
@@ -415,7 +425,7 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="name">Phone Number</FormLabel>
+               
                 <TextField
                  variant="standard"
                  name="phone"
@@ -430,7 +440,7 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
+                
                 <TextField
                  variant="standard"
                  name="email"
@@ -445,15 +455,18 @@ const   UserManagement = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
+                
                 <TextField
                   required
                   fullWidth
                   name="password"
+                  label="Password"
                   placeholder="••••••"
                   type={showPassword ? 'text' : 'password'}
                   id="password"                 
-                  variant="standard"                  
+                  variant="standard"  
+                  value={formData.password}
+                  onChange={handleFormChange}                 
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -481,12 +494,12 @@ const   UserManagement = () => {
                     Roles
                   </FormLabel>
                   <Select
-                name="role"
-                id="role"
-                value={formData.email}
+                name="roles"
+                id="roles"
+                value={formData.roles}
                 onChange={handleFormChange}
                 fullWidth
-                variant="outlined"
+                variant="standard"
                 sx={{
                     marginTop: 2,
                     '& legend': { display: 'none' },
