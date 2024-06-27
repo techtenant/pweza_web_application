@@ -5,11 +5,21 @@ import * as Yup from 'yup';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {
+    postProduct,
+    updateProduct
+  } from "../../common/apis/product";
+  import { ToastContainer, toast } from "react-toastify";
+  import { useNavigate, useParams } from "react-router-dom";
+  import "react-toastify/dist/ReactToastify.min.css";
+  import { useMutation, useQueryClient } from "@tanstack/react-query";
+  import { useFormik } from "formik";
+  import { getFromLocalStorage } from '../../common/utils/LocalStorage';
+
 
 // Validation schema using Yup
-const validationSchema = Yup.object({
-    productName: Yup.string().required('Product Name is required'),
-    handle: Yup.string(),
+const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Product Name is required'),
     category: Yup.string().required('Category is required'),
     type: Yup.string().required('Type is required'),
     description: Yup.string(),
@@ -19,12 +29,10 @@ const validationSchema = Yup.object({
     material: Yup.string(),
     features: Yup.string(),
     condition: Yup.string().required('Condition is required'),
-    tags: Yup.string(),
 });
 
 const initialValues = {
-    productName: '',
-    handle: '',
+    name: '',
     category: '',
     type: 'Physical',
     description: '',
@@ -34,16 +42,55 @@ const initialValues = {
     material: '',
     features: '',
     condition: '',
-    tags: '',
-};
-
-const handleSubmit = (values, { setSubmitting }) => {
-    // Handle form submission
-    console.log('Form values:', values);
-    setSubmitting(false);
+   
 };
 
 const CreateProduct = () => {
+    const navigate = useNavigate();
+    const row = getFromLocalStorage("applications-detail-row") || {}
+    const account = getFromLocalStorage("user") || {}
+    const postMutation = useMutation({ mutationFn: postProduct });
+    const updateMutation = useMutation({ mutationFn: updateProduct });
+
+    const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+        try {
+            if (row?.id) {
+                values.id = row.id;
+                values.userId = account.id;
+                await updateMutation.mutateAsync(values);
+            } else {
+                values.userId = account.id;
+                await postMutation.mutateAsync(values);
+            }
+            toast.success("Successfully submitted product", {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                onClose: handleToastClose,
+            });
+            resetForm();
+        } catch (error) {
+            toast.error(error.response?.data || error.message, {
+                position: "top-right",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleToastClose = () => {
+        navigate("/pweza/products");
+    
+      };
+
     return (
         <Formik
             initialValues={initialValues}
@@ -52,6 +99,7 @@ const CreateProduct = () => {
         >
             {({ isSubmitting, handleChange, handleBlur, values }) => (
                 <Form>
+                     <ToastContainer />
                     <Box
                         sx={{
                             display: 'flex',
@@ -63,6 +111,7 @@ const CreateProduct = () => {
                             py: 5,
                         }}
                     >
+                       
                         <Box
                             sx={{
                                 backgroundColor: '#fff',
@@ -98,14 +147,14 @@ const CreateProduct = () => {
                                 <Grid item xs={12} sm={6}>
                                     <Field
                                         as={TextField}
-                                        name="productName"
+                                        name="name"
                                         label="Product Name"
                                         variant="outlined"
                                         fullWidth
                                         onChange={handleChange}
                                         onBlur={handleBlur}
-                                        value={values.productName}
-                                        helperText={<ErrorMessage name="productName" />}
+                                        value={values.name}
+                                        helperText={<ErrorMessage name="name" />}
                                         required
                                     />
                                 </Grid>
@@ -286,10 +335,14 @@ const CreateProduct = () => {
 
 
                         </Box>
+                      
                     </Box>
+                    
                 </Form>
             )}
+           
         </Formik>
+        
     );
 };
 

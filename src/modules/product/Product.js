@@ -41,41 +41,40 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 const ProductList = () => {
     const navigate = useNavigate();
     const { data: DeliveryData, isLoading } = useQuery({
-        queryKey: 'deliveries',
-        queryFn: getDeliveries
+        queryKey: 'products',
+        queryFn: getProducts
     });
     
     const columns = useMemo(
-        () => [
+        () => [         
             {
-                accessorKey: 'id',
-                header: 'Id',
-                enableEditing: false,
+                accessorKey: 'name',
+                header: 'Name',
                 size: 80,
             },
             {
-                accessorKey: 'distance',
-                header: 'Distance',
+                accessorKey: 'description',
+                header: 'Description',
                 size: 80,
             },
             {
-                accessorKey: 'cost',
-                header: 'Cost',
+                accessorKey: 'size',
+                header: 'Size',
                 size: 80,
             },
             {
-                accessorKey: 'sourceAddress',
-                header: 'Source Address',
+                accessorKey: 'color',
+                header: 'Color',
                 size: 80,
             },
             {
-                accessorKey: 'destinationAddress',
-                header: 'Destination Address',
+                accessorKey: 'weight',
+                header: 'Weight',
                 size: 80,
             },
             {
-                accessorKey: 'status',
-                header: 'Status',
+                accessorKey: 'condition',
+                header: 'Condition',
                 size: 80,
             },
            
