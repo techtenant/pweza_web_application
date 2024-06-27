@@ -17,6 +17,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
+import GroupIcon from '@mui/icons-material/Group';
 
 import { getFromLocalStorage,removeItem } from '../../common/utils/LocalStorage';
  
@@ -40,7 +41,7 @@ const handleLogout = () => {
 export const mainListItems = (
  
      <React.Fragment>
-     {(userRole && (userRole.includes("Customer") || userRole.includes("Admin")) || userRole.includes("SuperAdmin")) && (
+     {(userRole && (userRole?.includes("Customer") || userRole?.includes("Admin")) || userRole?.includes("SuperAdmin")) && (
     <> 
      <ListItemButton component={Link} to="/pweza/dashboard">
       <ListItemIcon sx={{ color: 'white' }}>
@@ -74,7 +75,7 @@ export const mainListItems = (
     </ListItemButton>
     </>
      )}
-    {(userRole && (userRole.includes("Rider") || userRole.includes("Admin")) || userRole.includes("SuperAdmin")) && (
+    {(userRole && (userRole?.includes("Rider") || userRole?.includes("Admin")) || userRole?.includes("SuperAdmin")) && (
       <>
       <ListItemButton component={Link} to="/pweza/riderdashboard">
       <ListItemIcon sx={{ color: 'white' }}>
@@ -93,7 +94,7 @@ export const mainListItems = (
      )}
 
 
-{(userRole && (userRole.includes("Admin")) || userRole.includes("SuperAdmin")) && ( 
+{(userRole && (userRole?.includes("Admin")) || userRole?.includes("SuperAdmin")) && ( 
     <>
   <ListItemButton component={Link} to="/pweza/roles">
     <ListItemIcon sx={{ color: 'white' }}>
@@ -124,6 +125,12 @@ export const mainListItems = (
      <SportsMotorsportsIcon />
    </ListItemIcon>
    <ListItemText primary="Bikes" />
+ </ListItemButton>
+ <ListItemButton component={Link} to="/pweza/userManagement">
+   <ListItemIcon sx={{ color: 'white' }}>
+     <GroupIcon />
+   </ListItemIcon>
+   <ListItemText primary="User Management" />
  </ListItemButton>
    </>
        )}
