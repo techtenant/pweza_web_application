@@ -4,6 +4,7 @@ import {
     flexRender
 
 } from 'material-react-table';
+
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
@@ -11,18 +12,24 @@ import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
 import { useQuery } from "@tanstack/react-query";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import {ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import { emphasize, styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getProducts, deleteProducts } from '../../common/apis/product';
+import { getOrders, getOrderByUserId,deleteOrder } from '../../common/apis/orders';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Button, Breadcrumbs, Chip, Box, Divider, Grid, Menu, MenuItem } from '@mui/material';
-import { setLocalStorage, removeItem } from '../../common/utils/LocalStorage';
+import { Button, Breadcrumbs, Chip, Box, Divider, Grid, Menu, MenuItem,Accordion, AccordionSummary,
+    AccordionDetails,Typography } from '@mui/material';
+import { setLocalStorage, removeItem ,getFromLocalStorage} from '../../common/utils/LocalStorage';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
@@ -45,7 +52,24 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     };
 }); // TypeScript only: need a type cast here because https://github.com/Microsoft/TypeScript/issues/26591
 
-const ProductList = () => {
+
+const getStatusChip = (status) => {
+    switch (status) {
+        case 'Accepted':
+            return <Chip icon={<CheckCircleIcon />} label="Accepted" style={{ backgroundColor: '#e0f7fa', color: '#00796b' }} />;
+        case 'Canceled':
+            return <Chip icon={<CancelIcon />} label="Canceled" style={{ backgroundColor: '#ffebee', color: '#c62828' }} />;
+        case 'Rejected':
+            return <Chip icon={<HighlightOffIcon />} label="Rejected" style={{ backgroundColor: '#fbe9e7', color: '#d84315' }} />;
+        case 'Pending':
+            return <Chip icon={<HourglassEmptyIcon />} label="Pending" style={{ backgroundColor: '#fff3e0', color: '#ef6c00' }} />;
+        default:
+            return <Chip label="Unknown" />;
+    }
+};
+
+const OrderList = () => {
+    const account = getFromLocalStorage("user");
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [selectedRow, setSelectedRow] = useState(null);
     const [isDeleteModalOpen, setOpenDeleteModal] = useState(false);
@@ -63,16 +87,16 @@ const ProductList = () => {
         setAnchorEl(null);
     };
     const handleEdit = () => {
-        setLocalStorage("products-detail-row", selectedRow);
-        navigate(`/pweza/newProduct`);
+        setLocalStorage("order-detail-row", selectedRow);
+        navigate(`/pweza/newOrder`);
     };
     const handleDelete = async () => {
         try {
-            await deleteProducts(selectedRow.id);
+            await deleteOrder(selectedRow.id);
             await refetch();
             setOpenDeleteModal(false);
 
-            toast.success(`You have Successfully deleted the product.`, {
+            toast.success(`You have Successfully deleted the Order.`, {
                 position: "top-right",
                 autoClose: 1000,
                 hideProgressBar: false,
@@ -83,7 +107,7 @@ const ProductList = () => {
             });
 
         } catch (error) {
-            console.error('Error deleting Product.Please contact our ICT team for further guidance', error);
+            console.error('Error deleting an Order.Please contact our ICT team for further guidance', error);
         }
     };
 
@@ -97,43 +121,30 @@ const ProductList = () => {
         setOpenDeleteModal(false);
     }
     const navigate = useNavigate();
-    const { data: DeliveryData, isLoading, refetch } = useQuery({
-        queryKey: 'products',
-        queryFn: getProducts
+    const { data: orderData, isLoading, refetch } = useQuery({
+        queryKey: ['orders',account.id],
+        queryFn: getOrderByUserId
     });
-
+console.log("orderData",orderData);
     const columns = useMemo(
         () => [
             {
-                accessorKey: 'name',
-                header: 'Name',
+                accessorKey: 'id',
+                header: 'Id',
                 size: 80,
             },
             {
-                accessorKey: 'description',
-                header: 'Description',
+                accessorKey: 'orderDate',
+                header: 'Order Date',
                 size: 80,
             },
             {
-                accessorKey: 'size',
-                header: 'Size',
+                accessorKey: 'status',
+                header: 'Status',
                 size: 80,
+                Cell: ({ cell }) => getStatusChip(cell.getValue())
             },
-            {
-                accessorKey: 'color',
-                header: 'Color',
-                size: 80,
-            },
-            {
-                accessorKey: 'weight',
-                header: 'Weight',
-                size: 80,
-            },
-            {
-                accessorKey: 'condition',
-                header: 'Condition',
-                size: 80,
-            },
+            
 
         ],
         []
@@ -151,6 +162,7 @@ const ProductList = () => {
             })
     );
     return (
+      
         <Grid container alignItems="stretch">
             <Grid item md={12} style={{ marginTop: "50px", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
                 <Breadcrumbs aria-label="breadcrumb" sx={{ marginBottom: '20px' }}>
@@ -166,7 +178,7 @@ const ProductList = () => {
                 <ThemeProvider theme={tableTheme}>
                     <MaterialReactTable
                         columns={columns}
-                        data={DeliveryData?.data || []}
+                        data={orderData?.data || []}
                         isLoading={isLoading}
                         enableRowActions
                         positionActionsColumn="last"
@@ -225,7 +237,7 @@ const ProductList = () => {
                                     startIcon={<AddCircleIcon />}
                                     onClick={() => {
                                         removeItem('row-data');
-                                        navigate("/pweza/newProduct");
+                                        navigate("/pweza/newOrder");
                                     }}
                                     sx={{
                                         fontWeight: "bolder",
@@ -241,6 +253,29 @@ const ProductList = () => {
 
                             </Box>
                         )}
+                        renderDetailPanel={({ row }) => {
+                            return (
+                              <Accordion>
+                                <AccordionSummary
+                                  expandIcon={<ExpandMoreIcon />}
+                                  aria-controls="panel1a-content"
+                                  id="panel1a-header"
+                                >
+                                  <Typography>Order Details</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                  <Typography>
+                                    {row.original.orderDetails.map((detail, index) => (
+                                      <div key={index}>
+                                        <p>Product ID: {detail.productId}</p>
+                                        <p>Quantity: {detail.quantity}</p>
+                                      </div>
+                                    ))}
+                                  </Typography>
+                                </AccordionDetails>
+                              </Accordion>
+                            );
+                          }}
                     />
                 </ThemeProvider>
                 <Dialog
@@ -273,7 +308,8 @@ const ProductList = () => {
             </Grid>
             <ToastContainer />
         </Grid>
+       
     );
 };
 
-export default ProductList;
+export default OrderList;

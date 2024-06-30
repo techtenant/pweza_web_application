@@ -31,26 +31,28 @@ const validationSchema = Yup.object().shape({
     condition: Yup.string().required('Condition is required'),
 });
 
-const initialValues = {
-    name: '',
-    category: '',
-    type: 'Physical',
-    description: '',
-    size: '',
-    color: '',
-    weight: '',
-    material: '',
-    features: '',
-    condition: '',
-   
-};
+
 
 const CreateProduct = () => {
     const navigate = useNavigate();
-    const row = getFromLocalStorage("applications-detail-row") || {}
+    const row = getFromLocalStorage("products-detail-row") || {}
     const account = getFromLocalStorage("user") || {}
     const postMutation = useMutation({ mutationFn: postProduct });
     const updateMutation = useMutation({ mutationFn: updateProduct });
+
+    const initialValues = {
+        name: row?.name || "",
+        category: row?.category || "",
+        type:row?.type || "Physical",
+        description: row?.description || "",
+        size: row?.size || "",
+        color: row?.color || "",
+        weight:row?.weight || "",
+        material:row?.material || "",
+        features: row?.features || "",
+        condition: row?.condition || "",
+       
+    };
 
     const handleSubmit = async (values, { resetForm, setSubmitting }) => {
         try {
@@ -181,7 +183,7 @@ const CreateProduct = () => {
                                         as={TextField}
                                         select
                                         name="category"
-                                        label="Category *"
+                                        label="Category"
                                         variant="outlined"
                                         fullWidth
                                         onChange={handleChange}
@@ -200,7 +202,7 @@ const CreateProduct = () => {
                                         as={TextField}
                                         select
                                         name="type"
-                                        label="Type *"
+                                        label="Type"
                                         variant="outlined"
                                         fullWidth
                                         onChange={handleChange}

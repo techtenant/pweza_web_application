@@ -26,6 +26,8 @@ import NotificationsList from './modules/rider/notifications/Notifications';
 import NavigationPage from './modules/rider/notifications/NavigationPage';
 import PackageConfirmation from './modules/rider/notifications/Confirmation';
 import UserManagement from './modules/account/userManagement';
+import OrderList from './modules/orders/orderList';
+import CreateNewOrder from './modules/orders/order';
 
 
 import { getFromLocalStorage, removeItem } from './common/utils/LocalStorage';
@@ -107,6 +109,8 @@ function App() {
                   <Route path="products" element={<ProductList />} />     
                   <Route path="newProduct" element={<CreateProduct />} />  
                   <Route path="payment" element={<PaymentList />} />  
+                  <Route path="newOrder" element={<CreateNewOrder />} />  
+                  <Route path="orders" element={<OrderList />} />  
                   <Route path="paymentcheckout" element={<Checkout />} /> 
                   <Route path ="orderTracking" element={< OrderTrackingPage/>} />
                   <Route path ="notifications" element={< NotificationsList/>} />   

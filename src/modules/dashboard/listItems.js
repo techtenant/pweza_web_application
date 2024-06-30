@@ -55,6 +55,12 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Products" />
     </ListItemButton>
+    <ListItemButton component={Link} to="/pweza/orders">
+      <ListItemIcon sx={{ color: 'white' }}>
+        <ShoppingCartIcon />
+      </ListItemIcon>
+      <ListItemText primary="Orders" />
+    </ListItemButton>
     <ListItemButton component={Link} to="/pweza/delivery">
       <ListItemIcon sx={{ color: 'white' }}>
         <DeliveryDiningIcon />
