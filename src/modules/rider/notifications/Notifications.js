@@ -5,15 +5,21 @@ import {
 
 } from 'material-react-table';
 import { useQuery } from "@tanstack/react-query";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import {ExpandMore as ExpandMoreIcon,Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import { emphasize, styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getDeliveries} from '../../../common/apis/delivery';
-import { getProducts} from '../../../common/apis/product';
-import { Button, Typography, Grid, Breadcrumbs,Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { setLocalStorage, removeItem } from '../../../common/utils/LocalStorage';
+import { getOrderByUserId, postAcceptOrder,postRejectOrder} from '../../../common/apis/orders';
+import { Button, Typography, Grid, Breadcrumbs,Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,Accordion, AccordionSummary,
+    AccordionDetails ,Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,Paper,Box,Divider} from '@mui/material';
+import { setLocalStorage, removeItem, getFromLocalStorage } from '../../../common/utils/LocalStorage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -67,25 +73,42 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
     const NotificationsList = () => {
         const [data, setData] = useState(deldata);
         const [open, setOpen] = useState(false);
+        const [rejectOpen, setRejectOpen] = useState(false);
         const [currentId, setCurrentId] = useState(null);
+        const account = getFromLocalStorage("user");
     
         const navigate = useNavigate();
-        const { data: DeliveryData, isLoading } = useQuery({
-            queryKey: 'deliveries',
-            queryFn: () => Promise.resolve(deldata) // Replace with your actual data fetching function
+        const { data: orderData, isLoading, refetch } = useQuery({
+            queryKey: ['orders',account.id],
+            queryFn: getOrderByUserId
         });
     
         const handleOpen = (id) => {
             setCurrentId(id);
             setOpen(true);
         };
+        const handleRejectOpen = (id) => {
+            setCurrentId(id);
+            setRejectOpen(true);
+        };
     
         const handleClose = () => {
             setOpen(false);
             setCurrentId(null);
         };
+        const handleRejectClose = () => {
+            setRejectOpen(false);
+            setCurrentId(null);
+        };
     
         const handleAction = (id, status) => {
+            const updatedData = data.map(item => 
+                item.id === id ? { ...item, status } : item
+            );
+            setData(updatedData);
+            handleClose();
+        };
+        const handleRejectAction = (id, status) => {
             const updatedData = data.map(item => 
                 item.id === id ? { ...item, status } : item
             );
@@ -97,31 +120,16 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
             navigate(`/pweza/navigation`);
         }
     
+    
         const columns = useMemo(() => [
-            {
+           {
                 accessorKey: 'id',
                 header: 'Id',
-                enableEditing: false,
                 size: 80,
             },
             {
-                accessorKey: 'distance',
-                header: 'Distance',
-                size: 80,
-            },
-            {
-                accessorKey: 'cost',
-                header: 'Cost',
-                size: 80,
-            },
-            {
-                accessorKey: 'sourceAddress',
-                header: 'Source Address',
-                size: 80,
-            },
-            {
-                accessorKey: 'destinationAddress',
-                header: 'Destination Address',
+                accessorKey: 'orderDate',
+                header: 'Order Date',
                 size: 80,
             },
             {
@@ -136,20 +144,38 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                 size: 100,
                 Cell: ({ row }) => (
                     <Button variant="contained" 
+                    color="success"
+                    startIcon={<CheckIcon />}
+                    onClick={() => handleOpen(row.original.id)}
                     sx={{
-                        borderRadius: '10px',
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                        textTransform: 'none',
-                        '&:hover': {
-                            backgroundColor: 'primary.dark',
+                        fontWeight: "bolder",
+                        background: "green",
+                        "&:hover": {
+                            background: "darkgreen",
                         },
-                        padding: '10px 20px',
-                        fontSize: '16px',
-                        boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                     }}
-                     onClick={() => handleOpen(row.original.id)}>
-                        Accept/Reject
+                     >
+                        Accept
+                    </Button>
+                )
+            },
+            {
+                accessorKey: 'actions',
+                header: 'Actions',
+                size: 100,
+                Cell: ({ row }) => (
+                    <Button variant="contained" 
+                    color="error"
+                    startIcon={<CloseIcon />}
+                    onClick={() => handleRejectOpen(row.original.id)}
+                    sx={{
+                        fontWeight: "bolder",
+                        background: "red",
+                        "&:hover": {
+                            background: "darkred",
+                        },
+                    }}>
+                        Reject
                     </Button>
                 )
             },
@@ -178,7 +204,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                     ) : null
                 )
             }
-        ], [data]);
+        ], []);
     
         const tableTheme = useMemo(() => createTheme({
             palette: {
@@ -203,27 +229,97 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                     <ThemeProvider theme={tableTheme}>
                         <MaterialReactTable
                             columns={columns}
-                            data={data || []}
+                            data={orderData?.data || []}
                             isLoading={isLoading}
+                            renderDetailPanel={({ row }) => {
+                                return (
+                                    <Accordion>
+                                    <AccordionSummary
+                                      expandIcon={<ExpandMoreIcon />}
+                                      aria-controls="panel1a-content"
+                                      id="panel1a-header"
+                                    >
+                                      <Typography variant="h6">Checkout Summary</Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                      <TableContainer component={Paper} variant="outlined">
+                                        <Table>
+                                          <TableHead>
+                                            <TableRow>
+                                              <TableCell>Product</TableCell>
+                                              <TableCell align="center">Qty</TableCell>
+                                              <TableCell align="right">Unit Price</TableCell>
+                                              <TableCell align="right">Amount</TableCell>
+                                            </TableRow>
+                                          </TableHead>
+                                          <TableBody>
+                                          {row.original.orderDetails.map((detail, index) => (
+                                              <TableRow key={index}>
+                                                <TableCell>xx</TableCell>
+                                                <TableCell align="center">5</TableCell>
+                                                <TableCell align="right">20.2</TableCell>
+                                                <TableCell align="right">${detail.quantity}</TableCell>
+                                              </TableRow>
+                                            ))}
+                                          </TableBody>
+                                        </Table>
+                                      </TableContainer>
+                                      <Box sx={{ mt: 2 }}>
+                                        <Box display="flex" justifyContent="space-between">
+                                          <Typography>Subtotal</Typography>
+                                          <Typography>43</Typography>
+                                        </Box>
+                                        <Box display="flex" justifyContent="space-between">
+                                          <Typography>Discount</Typography>
+                                          <Typography>-</Typography>
+                                        </Box>
+                                        <Box display="flex" justifyContent="space-between">
+                                          <Typography>Shipping</Typography>
+                                          <Typography>56</Typography>
+                                        </Box>
+                                        <Box display="flex" justifyContent="space-between">
+                                          <Typography>Taxes</Typography>
+                                          <Typography>78</Typography>
+                                        </Box>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Box display="flex" justifyContent="space-between">
+                                          <Typography variant="h6">Total</Typography>
+                                          <Typography variant="h6">66</Typography>
+                                        </Box>
+                                      </Box>
+                                    </AccordionDetails>
+                                  </Accordion>
+                                );
+                              }}
                         />
                     </ThemeProvider>
                 </Grid>
                 <ToastContainer />
-    
                 <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>{"Accept or Reject Delivery"}</DialogTitle>
+                    <DialogTitle>{"Accept Delivery"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Do you want to accept or reject this delivery?
+                            Do you want to accept  this delivery?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => handleAction(currentId, 'Rejected')} color="secondary">
-                            Reject
-                        </Button>
+                       
                         <Button onClick={() => handleAction(currentId, 'Accepted')} color="primary">
                             Accept
                         </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={rejectOpen} onClose={handleRejectClose}>
+                    <DialogTitle>{" Reject Delivery"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Do you want to reject this delivery?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => handleRejectAction(currentId, 'Rejected')} color="secondary">
+                            Reject
+                        </Button>                      
                     </DialogActions>
                 </Dialog>
             </Grid>

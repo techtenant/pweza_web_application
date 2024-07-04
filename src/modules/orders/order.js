@@ -185,7 +185,7 @@ const CreateNewOrder = () => {
         const payload = {
             orderDate: new Date(Date.now()),
             userId: account.id,
-            Status: "Pending",
+            Status: 0,
 
             orderDetails: selectedItems.map((itemId) => {
                 const selectedItem = items.find((item) => item.id === itemId);

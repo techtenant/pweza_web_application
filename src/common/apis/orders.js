@@ -45,8 +45,34 @@ export const getOrderById = async (id) => {
 
 export const getOrderByUserId = async  ({ queryKey }) => {
   const [, id] = queryKey;
-  let url = `${apiRoutes.pweza_account}/Orders/user/${id}`;
-  
+  let url = `${apiRoutes.pweza_account}/Orders/user/${id}`; 
+ 
+  return await axios.get(url);
+};
+
+
+export const postAcceptOrder = async  ({ queryKey }) => {
+  let params = "";
+  if (queryKey.length > 1){
+    let orderId = queryKey[1];
+    let riderId = queryKey[2];
+    params = "?orderId=" + orderId +
+    "&riderId=" + riderId;
+  }
+ 
+  let url = `${apiRoutes.pweza_account}/RiderOrders/accept/${params}`; 
+ 
+  return await axios.get(url);
+};
+export const postRejectOrder = async  ({ queryKey }) => {
+  let params = "";
+  if (queryKey.length > 1){
+    let orderId = queryKey[1];
+    let riderId = queryKey[2];
+    params = "?orderId=" + orderId +
+    "&riderId=" + riderId;
+  }
+  let url = `${apiRoutes.pweza_account}/RiderOrders/accept/${params}`; 
  
   return await axios.get(url);
 };

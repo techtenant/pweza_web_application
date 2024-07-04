@@ -4,20 +4,20 @@ import axios from "axios";
 
 export const postDelivery = async (values) => {
    
-  return await axios.post(`${apiRoutes.pweza}/orders/Deliveries`, values);
+  return await axios.post(`${apiRoutes.pweza_account}/Deliveries`, values);
 };
 
 export const updateDelivery = async (values) => {
   const { id, ...data } = values; 
   
-  return await axios.put(`${apiRoutes.pweza}/orders/Deliveries/${id}`, values);
+  return await axios.put(`${apiRoutes.pweza}/Deliveries/${id}`, values);
   
 };
 
 
 export const getDeliveries = async ({ queryKey }) => {
 
-  let url = `${apiRoutes.pweza}/orders/Deliveries`;
+  let url = `${apiRoutes.pweza_account}/Deliveries`;
 
   return await axios.get(url);
 };
@@ -25,7 +25,7 @@ export const getDeliveries = async ({ queryKey }) => {
 
 export const getDeliveryById = async (id) => {
 
-  let url = `${apiRoutes.pweza}/orders/Deliveries/${id}`;
+  let url = `${apiRoutes.pweza}/Deliveries/${id}`;
   
  
   return await axios.get(url);

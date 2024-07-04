@@ -273,6 +273,8 @@ export default function SignUp() {
 
   });
 
+  const filteredRoles = rolesData?.data?.filter(role => role.name === 'Rider' || role.name === 'Customer');
+
 
   return (
     <ThemeProvider theme={showCustomTheme ? SignUpTheme : defaultTheme}>
@@ -437,7 +439,7 @@ export default function SignUp() {
                     '& .MuiInputLabel-shrink': { opacity: 0, transition: "all 0.2s ease-in" }
                 }}
             >
-                {rolesData?.data?.map((role) => (
+                {filteredRoles?.map((role) => (
                     <MenuItem key={role.name} value={role.name}>
                         {role.name}
                     </MenuItem>

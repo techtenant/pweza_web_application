@@ -125,7 +125,7 @@ const OrderList = () => {
         queryKey: ['orders',account.id],
         queryFn: getOrderByUserId
     });
-console.log("orderData",orderData);
+
     const columns = useMemo(
         () => [
             {
@@ -248,7 +248,7 @@ console.log("orderData",orderData);
                                         },
                                     }}
                                 >
-                                    New Product
+                                    New Order
                                 </Button>
 
                             </Box>
@@ -285,11 +285,11 @@ console.log("orderData",orderData);
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">
-                        Delete Product
+                        Delete Order
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to delete The Product?
+                            Are you sure you want to delete This Order?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>

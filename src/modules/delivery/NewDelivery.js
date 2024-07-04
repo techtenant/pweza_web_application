@@ -18,7 +18,7 @@ import {
   TextField as MuiTextField,
   Typography,
 } from "@mui/material";
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker,Autocomplete  } from '@react-google-maps/api';
 import { spacing } from "@mui/system";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
@@ -32,8 +32,8 @@ import {
   getBikes
 } from "../../common/apis/bike";
 import {
-  gett
-} from "../../common/apis/bike";
+  getUsers
+} from "../../common/apis/account";
 import {
   getPackages
 } from "../../common/apis/packages";
@@ -43,6 +43,7 @@ import {
 import Paper from "@mui/material/Paper";
 import "react-toastify/dist/ReactToastify.min.css";
 import PublishIcon from '@mui/icons-material/Publish';
+import { getOrderByUserId } from '../../common/apis/orders';
 import { Person, LocationOn, CheckCircle, ArrowBack, ArrowForward } from '@mui/icons-material';
 import { getFromLocalStorage } from '../../common/utils/LocalStorage';
 
@@ -204,19 +205,67 @@ const NewDelivery = () => {
   const [destination, setDestination] = useState(null);
   const [distance, setDistance] = useState(0);
   const [cost, setCost] = useState(0);
+  const [sourceAutocomplete, setSourceAutocomplete] = useState(null);
+  const [destinationAutocomplete, setDestinationAutocomplete] = useState(null);
 
+  const onLoadSourceAutocomplete = (autocomplete) => {
+    setSourceAutocomplete(autocomplete);
+  };
 
+  const onLoadDestinationAutocomplete = (autocomplete) => {
+    setDestinationAutocomplete(autocomplete);
+  };
 
+  const onPlaceChangedSource = () => {
+    const place = sourceAutocomplete.getPlace();
+    if (place.geometry) {
+      const location = {
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()   
+      };
+      const loc = {
+        name: place.name,
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng()   
+      };
+      
+      setSource(location);
+      formik.setFieldValue('sourceLocation', loc);
+      if (destination) {
+        calculateDistance(location, destination);
+      }
+    }
+  };
+
+  const onPlaceChangedDestination = () => {
+    const place = destinationAutocomplete.getPlace();
+    if (place.geometry) {
+      const location = {        
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng()   
+      };
+      const loc = {
+        name: place.name,
+        latitude: place.geometry.location.lat(),
+        longitude: place.geometry.location.lng()   
+      };
+      setDestination(location);
+      formik.setFieldValue('destinationLocation', loc);
+      if (source) {
+        calculateDistance(source, location);
+      }
+    }
+  };
 
   const handleMapClick = async (event) => {
     const location = {
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng()
+      latitude: event.latLng.lat(),
+      longitude: event.latLng.lng()
     };
 
     if (!source) {
       setSource(location);
-      formik.setFieldValue('sourceAddress', `${location.lat},${location.lng}`);
+      
     } else {
       setDestination(location);
       formik.setFieldValue('destinationAddress', `${location.lat},${location.lng}`);
@@ -234,14 +283,14 @@ const NewDelivery = () => {
     dist = dist * 180 / Math.PI;
     dist = dist * 60 * 1.1515 * 1.609344; // Distance in kilometers
     setDistance(dist);
-    formik.setFieldValue('distance', dist);
+    //formik.setFieldValue('distance', dist);
     calculateCost(dist);
   };
 
   const calculateCost = (distance) => {
     const ratePerKm = 2; // Define your cost per kilometer      
     setCost(distance * ratePerKm);
-    formik.setFieldValue('cost', distance * ratePerKm);
+    // formik.setFieldValue('cost', distance * ratePerKm);
   };
 
   const postMutation = useMutation({ mutationFn: postDelivery });
@@ -270,32 +319,52 @@ const NewDelivery = () => {
 
   });
   const { data: ridersData } = useQuery({
-    queryKey: 'getRiders',
-    queryFn: getPackages,
+    queryKey: 'getUsers',
+    queryFn: getUsers,
 
   });
+
+  const { data: orderData } = useQuery({
+    queryKey: ['orders',account.id],
+    queryFn: getOrderByUserId
+});
+
+  const riders = ridersData?.data?.users.filter(user => user.roles.includes('Rider'));
+
   const formik = useFormik({
 
     initialValues: {
+      orderId: row?.userId || "",
       userId: row?.userId || account.id,
       riderId: row?.riderId || "",
-      bikeId: row?.bikeId || "",
-      distance: row?.distance || 0,
-      cost: row?.cost || 0,
-      packageId: row?.packageId || "",
-      sourceAddress: row?.sourceAddress || "",
-      destinationAddress: row?.destinationAddress || "",
-      status: row?.status || "pending payment"
+      bikeId: row?.bikeId || "",  
+      packageId: row?.packageId || "",  
+      status: row?.status || 0,
+      sourceLocation: {
+        name: '',
+        latitude: 0,
+        longitude: 0
+      },
+      destinationLocation: {
+        name: '',
+        latitude: 0,
+        longitude: 0
+      }
     },
     validationSchema: Yup.object().shape({
       packageId: Yup.string().required("Required"),
       bikeId: Yup.string().required("Required"),
+      riderId: Yup.string().required("Required"),
+      orderId: Yup.string().required("Required"),
     }),
 
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       console.log(values);
       try {
         console.log("values", values);
+        const payload = [
+
+        ]
         if (row?.id) {
           values.id = row.id;
 
@@ -332,6 +401,8 @@ const NewDelivery = () => {
     navigate("/pweza/delivery");
 
   };
+
+
   const renderStepContent = (step) => {
     switch (step) {
       case 0:
@@ -457,9 +528,52 @@ const NewDelivery = () => {
                     }}
                     my={2}
                   >
-                    {packageData?.data?.map((packaged) => (
-                      <MenuItem key={packaged.id} value={packaged.id}>
-                        {packaged.type}
+                    {riders?.map((rider) => (
+                      <MenuItem key={rider.id} value={rider.id}>
+                        {rider.userName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={5}
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="flex-start"
+            >
+              <Grid item sm={6}>
+                <FormControl sx={{ m: 1, width: "100%", marginBottom: "5px" }} size="medium">
+                  <FormLabel
+                    style={{
+                      fontSize: "16px",
+                      color: "#000",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Order
+                  </FormLabel>
+                  <Select
+                    name="orderId"
+                    label="orderId"
+                    value={formik.values.orderId}
+                    error={Boolean(formik.touched.orderId && formik.errors.orderId)}
+                    fullWidth
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    variant="outlined"
+                    sx={{
+                      marginTop: 2,
+                      '& legend': { display: 'none' },
+                      '& .MuiInputLabel-shrink': { opacity: 0, transition: "all 0.2s ease-in" }
+                    }}
+                    my={2}
+                  >
+                    {orderData?.data.map((order) => (
+                      <MenuItem key={order.id} value={order.id}>
+                        {order.id}
                       </MenuItem>
                     ))}
                   </Select>
@@ -471,36 +585,52 @@ const NewDelivery = () => {
       case 1:
         return (
           <Box style={{ maxWidth: '100%', margin: 'auto', padding: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <LoadScript googleMapsApiKey="AIzaSyAuWt5mMOgPSby9vFXFfti_LEDRuV97-Eg">
-              <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '400px' }}
-                center={center}
-                zoom={7}
-                options={{
-                  styles: mapStyles,
-                  disableDefaultUI: true,
-                  zoomControl: true,
-                  mapTypeControl: true,
-                }}
-                onClick={handleMapClick}
-              >
-                {source && <Marker position={source} label="S" icon={{ path: MyLocationIcon, scale: 7, fillColor: '#1976d2', fillOpacity: 1, strokeWeight: 2 }} />}
-                {destination && <Marker position={destination} label="D" icon={{ path: LocationOnIcon, scale: 7, fillColor: '#ff4081', fillOpacity: 1, strokeWeight: 2 }} />}
-              </GoogleMap>
-            </LoadScript>
-            <Box mt={2} style={{ textAlign: 'center' }}>
-              <Typography variant="h6" style={{ margin: '10px 0' }}>Distance: <strong>{distance.toFixed(2)} km</strong></Typography>
-              <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>${cost.toFixed(2)}</strong></Typography>
-            </Box>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => { setSource(null); setDestination(null); setDistance(0); setCost(0); }}
-              style={{ display: 'block', margin: '20px auto' }}
+          <LoadScript googleMapsApiKey="AIzaSyAuWt5mMOgPSby9vFXFfti_LEDRuV97-Eg" libraries={['places']}>
+            <Autocomplete onLoad={onLoadSourceAutocomplete} onPlaceChanged={onPlaceChangedSource}>
+              <TextField
+                label="Source Address"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              />
+            </Autocomplete>
+            <Autocomplete onLoad={onLoadDestinationAutocomplete} onPlaceChanged={onPlaceChangedDestination}>
+              <TextField
+                label="Destination Address"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+              />
+            </Autocomplete>
+            <GoogleMap
+              mapContainerStyle={{ width: '100%', height: '400px' }}
+              center={center}
+              zoom={7}
+              options={{
+                styles: mapStyles,
+                disableDefaultUI: true,
+                zoomControl: true,
+                mapTypeControl: true,
+              }}
+              onClick={handleMapClick}
             >
-              Reset
-            </Button>
+              {source && <Marker position={source} label="S" icon={{ path: MyLocationIcon, scale: 7, fillColor: '#1976d2', fillOpacity: 1, strokeWeight: 2 }} />}
+              {destination && <Marker position={destination} label="D" icon={{ path: LocationOnIcon, scale: 7, fillColor: '#ff4081', fillOpacity: 1, strokeWeight: 2 }} />}
+            </GoogleMap>
+          </LoadScript>
+          <Box mt={2} style={{ textAlign: 'center' }}>
+            <Typography variant="h6" style={{ margin: '10px 0' }}>Distance: <strong>{distance.toFixed(2)} km</strong></Typography>
+            <Typography variant="h6" style={{ margin: '10px 0' }}>Cost: <strong>${cost.toFixed(2)}</strong></Typography>
           </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => { setSource(null); setDestination(null); setDistance(0); setCost(0); }}
+            style={{ display: 'block', margin: '20px auto' }}
+          >
+            Reset
+          </Button>
+        </Box>
 
         );
       case 2:
