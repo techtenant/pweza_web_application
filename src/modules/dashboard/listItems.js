@@ -89,6 +89,18 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton> 
+    <ListItemButton component={Link} to="/pweza/biketypes">
+   <ListItemIcon sx={{ color: 'white' }}>
+     <TwoWheelerIcon />
+   </ListItemIcon>
+   <ListItemText primary="Bike Types" />
+ </ListItemButton>
+ <ListItemButton component={Link} to="/pweza/bikes">
+   <ListItemIcon sx={{ color: 'white' }}>
+     <SportsMotorsportsIcon />
+   </ListItemIcon>
+   <ListItemText primary="Bikes" />
+ </ListItemButton>
     <ListItemButton component={Link} to="/pweza/notifications">
       <ListItemIcon sx={{ color: 'white' }}>
         <CircleNotificationsIcon />
@@ -120,18 +132,7 @@ export const mainListItems = (
    </ListItemIcon>
    <ListItemText primary="Packages" />
  </ListItemButton>
- <ListItemButton component={Link} to="/pweza/biketypes">
-   <ListItemIcon sx={{ color: 'white' }}>
-     <TwoWheelerIcon />
-   </ListItemIcon>
-   <ListItemText primary="Bike Types" />
- </ListItemButton>
- <ListItemButton component={Link} to="/pweza/bikes">
-   <ListItemIcon sx={{ color: 'white' }}>
-     <SportsMotorsportsIcon />
-   </ListItemIcon>
-   <ListItemText primary="Bikes" />
- </ListItemButton>
+
  <ListItemButton component={Link} to="/pweza/userManagement">
    <ListItemIcon sx={{ color: 'white' }}>
      <GroupIcon />
