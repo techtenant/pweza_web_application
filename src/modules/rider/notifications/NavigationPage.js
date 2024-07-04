@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Button, Typography, Paper, List, ListItem, ListItemText, Divider,Grid } from '@mui/material';
 import MapView from './MapView';
+import { getFromLocalStorage } from '../../../common/utils/LocalStorage';
 
 const NavigationPage = () => {
   const [navigationStarted, setNavigationStarted] = useState(false);
   const [estimatedTime, setEstimatedTime] = useState('');
   const [arrivalConfirmed, setArrivalConfirmed] = useState(false);
+  const navigationData = getFromLocalStorage("navigation-detail-row");
+
+
+  console.log("navigationData",navigationData);
 
   const navigate = useNavigate();
 
@@ -17,6 +22,18 @@ const NavigationPage = () => {
 
   const handleNavigate = (id) => {
     navigate(`/pweza/confirmation`);
+  };
+
+  const sourceLocation = {
+    name: "Meru",
+    latitude: 0.0514721,
+    longitude: 37.6456042
+  };
+  
+  const destinationLocation = {
+    name: "Eldoret",
+    latitude: 0.5142774999999999,
+    longitude: 35.2697802
   };
 
   useEffect(() => {
@@ -39,16 +56,16 @@ const NavigationPage = () => {
         </Button>
         <Paper elevation={3} sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>
-            VE-004
+            Source
           </Typography>
           <Typography variant="body2" color="textSecondary" gutterBottom>
-            Brooklyn, New York, United States
+           {sourceLocation?.name}
           </Typography>
           <Box sx={{ my: 2 }}>
             <Typography variant="body2" gutterBottom>
-              Temperature (good)
+              Destination
             </Typography>
-            <Typography variant="h4">6°C</Typography>
+            <Typography variant="h4">{destinationLocation?.name}</Typography>
           </Box>
           <List>
             <ListItem>
@@ -70,7 +87,7 @@ const NavigationPage = () => {
           <Typography variant="h4" gutterBottom>
             Navigate to Pickup Location
           </Typography>
-          <MapView />
+          <MapView source={sourceLocation} destination={destinationLocation}/>
           <Box display="flex" justifyContent="center" my={2}>
             <Button variant="contained" color="primary" onClick={handleStartNavigation} sx={{ px: 4, py: 2 }}>
               Start Navigation

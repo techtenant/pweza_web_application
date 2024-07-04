@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import HomeIcon from '@mui/icons-material/Home';
 import { emphasize, styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { getDeliveries} from '../../../common/apis/delivery';
+import { getRiderDeliveries} from '../../../common/apis/delivery';
 import { getOrderByUserId, postAcceptOrder,postRejectOrder} from '../../../common/apis/orders';
 import { Button, Typography, Grid, Breadcrumbs,Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,Accordion, AccordionSummary,
     AccordionDetails ,Table,
@@ -20,7 +20,7 @@ import { Button, Typography, Grid, Breadcrumbs,Chip, Dialog, DialogActions, Dial
     TableHead,
     TableRow,Paper,Box,Divider} from '@mui/material';
 import { setLocalStorage, removeItem, getFromLocalStorage } from '../../../common/utils/LocalStorage';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -78,9 +78,9 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
         const account = getFromLocalStorage("user");
     
         const navigate = useNavigate();
-        const { data: orderData, isLoading, refetch } = useQuery({
-            queryKey: ['orders',account.id],
-            queryFn: getOrderByUserId
+        const { data: deliveryData, isLoading, refetch } = useQuery({
+            queryKey: ['deliveries',account.id],
+            queryFn: getRiderDeliveries
         });
     
         const handleOpen = (id) => {
@@ -100,23 +100,61 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
             setRejectOpen(false);
             setCurrentId(null);
         };
-    
-        const handleAction = (id, status) => {
-            const updatedData = data.map(item => 
-                item.id === id ? { ...item, status } : item
-            );
-            setData(updatedData);
-            handleClose();
+
+        const handleRejectAction = (id) => {
+            const queryKey = ["postAcceptOrder", id, account.id];
+
+            // Call the postAcceptOrder function with the constructed queryKey
+            postRejectOrder({ queryKey })
+              .then((response) => {
+                toast.warning(`You have rejected the delivery.`, {
+                    position: "top-right",
+                    autoClose: 1000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    // onClose: handleToastClose,
+                });
+                refetch();
+              })
+              .catch((error) => {
+                // Handle any errors here
+                console.error("Error accepting order", error);
+              });
+             
+              handleRejectClose();
         };
-        const handleRejectAction = (id, status) => {
-            const updatedData = data.map(item => 
-                item.id === id ? { ...item, status } : item
-            );
-            setData(updatedData);
+    
+        const handleAction = (id) => {
+            const queryKey = ["postAcceptOrder", id, account.id];
+
+            // Call the postAcceptOrder function with the constructed queryKey
+            postAcceptOrder({ queryKey })
+              .then((response) => {
+                toast.success(`You have Successfully accepted the delivery.`, {
+                    position: "top-right",
+                    autoClose: 1000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    // onClose: handleToastClose,
+                });
+                refetch();
+              })
+              .catch((error) => {
+                // Handle any errors here
+                console.error("Error accepting order", error);
+              });
+             
             handleClose();
         };
 
-        const handleNavigate = (id) => {
+
+
+        const handleNavigate = (selectedRow) => {
+            setLocalStorage("navigation-detail-row", selectedRow);
             navigate(`/pweza/navigation`);
         }
     
@@ -128,12 +166,12 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                 size: 80,
             },
             {
-                accessorKey: 'orderDate',
+                accessorKey: 'order.orderDate',
                 header: 'Order Date',
                 size: 80,
             },
             {
-                accessorKey: 'status',
+                accessorKey: 'statusString',
                 header: 'Status',
                 size: 80,
                 Cell: ({ cell }) => getStatusChip(cell.getValue())
@@ -146,7 +184,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                     <Button variant="contained" 
                     color="success"
                     startIcon={<CheckIcon />}
-                    onClick={() => handleOpen(row.original.id)}
+                    onClick={() => handleOpen(row.original.orderId)}
                     sx={{
                         fontWeight: "bolder",
                         background: "green",
@@ -184,7 +222,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                 header: 'Actions',
                 size: 100,
                 Cell: ({ row }) => (
-                    row.original.status === 'Accepted' ? (
+                    row.original.status === 0 ? (
                         <Button variant="contained" 
                         sx={{
                             borderRadius: '10px',
@@ -198,7 +236,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                             fontSize: '16px',
                             boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
                         }}
-                        onClick={() => handleNavigate(row.original.id)}>
+                        onClick={() => handleNavigate(row.original)}>
                            View Pickup Location
                         </Button>
                     ) : null
@@ -213,7 +251,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                 }
             }
         }), []);
-    
+    console.log("riderDe", deliveryData?.data);
         return (
             <Grid container alignItems="stretch">
                 <Grid item md={12} style={{ marginTop: "50px", marginLeft: "50px", marginRight: "50px", width: "100%" }}>
@@ -229,7 +267,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                     <ThemeProvider theme={tableTheme}>
                         <MaterialReactTable
                             columns={columns}
-                            data={orderData?.data || []}
+                            data={deliveryData?.data || []}
                             isLoading={isLoading}
                             renderDetailPanel={({ row }) => {
                                 return (
@@ -239,7 +277,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                                       aria-controls="panel1a-content"
                                       id="panel1a-header"
                                     >
-                                      <Typography variant="h6">Checkout Summary</Typography>
+                                      <Typography variant="h6">Order Summary</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails>
                                       <TableContainer component={Paper} variant="outlined">
@@ -247,24 +285,26 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                                           <TableHead>
                                             <TableRow>
                                               <TableCell>Product</TableCell>
-                                              <TableCell align="center">Qty</TableCell>
-                                              <TableCell align="right">Unit Price</TableCell>
-                                              <TableCell align="right">Amount</TableCell>
+                                              <TableCell align="center">Quantity</TableCell>
+                                              <TableCell align="center">Size</TableCell>
+                                              <TableCell align="right">Color</TableCell>
+                                              <TableCell align="right">Weight</TableCell>
                                             </TableRow>
                                           </TableHead>
                                           <TableBody>
-                                          {row.original.orderDetails.map((detail, index) => (
-                                              <TableRow key={index}>
-                                                <TableCell>xx</TableCell>
-                                                <TableCell align="center">5</TableCell>
-                                                <TableCell align="right">20.2</TableCell>
-                                                <TableCell align="right">${detail.quantity}</TableCell>
-                                              </TableRow>
+                                            {row?.original.order?.orderDetails?.map((item, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{item.product.name}</TableCell>
+                                                <TableCell align="center">{item.quantity}</TableCell>
+                                                <TableCell align="center">{item.product.size}</TableCell>
+                                                <TableCell align="right">{item.product.color}</TableCell>
+                                                <TableCell align="right">{item.product.weight}</TableCell>
+                                            </TableRow>
                                             ))}
-                                          </TableBody>
+                                        </TableBody>
                                         </Table>
                                       </TableContainer>
-                                      <Box sx={{ mt: 2 }}>
+                                      {/* <Box sx={{ mt: 2 }}>
                                         <Box display="flex" justifyContent="space-between">
                                           <Typography>Subtotal</Typography>
                                           <Typography>43</Typography>
@@ -286,7 +326,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
                                           <Typography variant="h6">Total</Typography>
                                           <Typography variant="h6">66</Typography>
                                         </Box>
-                                      </Box>
+                                      </Box> */}
                                     </AccordionDetails>
                                   </Accordion>
                                 );

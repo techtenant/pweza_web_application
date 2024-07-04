@@ -60,7 +60,7 @@ export const postAcceptOrder = async  ({ queryKey }) => {
     "&riderId=" + riderId;
   }
  
-  let url = `${apiRoutes.pweza_account}/RiderOrders/accept/${params}`; 
+  let url = `${apiRoutes.pweza_account}/RiderOrders/accept${params}`; 
  
   return await axios.get(url);
 };

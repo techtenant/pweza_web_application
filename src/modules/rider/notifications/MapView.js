@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+import React, { useEffect, useState } from 'react';
+import { LoadScript, GoogleMap, Marker, DirectionsRenderer } from '@react-google-maps/api';
 
 const containerStyle = {
   width: '100%',
@@ -7,32 +7,23 @@ const containerStyle = {
   marginBottom: '20px'
 };
 
-const center = {
-  lat :-1.2921,
-  lng:  36.8219
-};
-
-const destination = {
-  lat:  -1.254337,
-  lng: 36.681660
-};
-
-const MapView = () => {
+const MapView = ({ source, destination }) => {
   const [response, setResponse] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    if (!response) {
+    if (mapLoaded && !response) {
       calculateRoute();
     }
-  }, [response]);
+  }, [mapLoaded, response]);
 
   const calculateRoute = () => {
-    if (response) return;
+    if (!window.google || response) return;
     const directionsService = new window.google.maps.DirectionsService();
     directionsService.route(
       {
-        origin: center,
-        destination: destination,
+        origin: { lat: source.latitude, lng: source.longitude },
+        destination: { lat: destination.latitude, lng: destination.longitude },
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
       (result, status) => {
@@ -46,18 +37,17 @@ const MapView = () => {
   };
 
   return (
-    <LoadScript googleMapsApiKey="AIzaSyAuWt5mMOgPSby9vFXFfti_LEDRuV97-Eg">
+    <LoadScript
+      googleMapsApiKey="AIzaSyAuWt5mMOgPSby9vFXFfti_LEDRuV97-Eg"
+      onLoad={() => setMapLoaded(true)}
+    >
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={center}
+        center={{ lat: source.latitude, lng: source.longitude }}
         zoom={12}
       >
-        <Marker position={center} />
-        {response && (
-          <DirectionsRenderer
-            directions={response}
-          />
-        )}
+        <Marker position={{ lat: source.latitude, lng: source.longitude }} />
+        {response && <DirectionsRenderer directions={response} />}
       </GoogleMap>
     </LoadScript>
   );

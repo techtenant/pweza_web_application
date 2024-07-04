@@ -22,6 +22,15 @@ export const getDeliveries = async ({ queryKey }) => {
   return await axios.get(url);
 };
 
+export const getRiderDeliveries = async ({ queryKey }) => {
+  const [, id] = queryKey;
+  let url = `${apiRoutes.pweza_account}/RiderDelivery/history/${id}`;
+
+  return await axios.get(url);
+};
+
+
+
 
 export const getDeliveryById = async (id) => {
 
