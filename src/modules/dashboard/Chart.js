@@ -83,14 +83,14 @@ const Chart = ({ data }) => {
     labels: data.labels,
     datasets: [
       {
-        label: 'This Year',
+        label: 'This Month',
         data: data.thisYear,
         backgroundColor: 'rgba(255, 64, 0, 0.5)',
         borderColor: 'rgba(255, 64, 0, 1)',
         borderWidth: 1,
       },
       {
-        label: 'Last Year',
+        label: 'Last Month',
         data: data.lastYear,
         backgroundColor: 'rgba(33, 150, 243, 0.5)',
         borderColor: 'rgba(33, 150, 243, 1)',
@@ -103,7 +103,7 @@ const Chart = ({ data }) => {
     <Card sx={{ height: '100%' }}>
       <CardContent>
         <Typography variant="h6" component="div">
-          Sales Comparison
+        Spending over time
         </Typography>
         <div style={{ height: '300px' }}>
           <Bar data={chartData} options={options} />

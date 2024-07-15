@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-
+import { getFromLocalStorage } from '../../common/utils/LocalStorage';
 const user = {
   name: 'Sofia Rivers',
   avatar: '/assets/avatar.png',
@@ -18,6 +18,7 @@ const user = {
 };
 
 export function AccountInfo() {
+  const account = getFromLocalStorage("user") || {}
   return (
     <Card>
       <CardContent>
@@ -26,12 +27,12 @@ export function AccountInfo() {
             <Avatar src={user.avatar} sx={{ height: '80px', width: '80px' }} />
           </div>
           <Stack spacing={1} sx={{ textAlign: 'center' }}>
-            <Typography variant="h5">{user.name}</Typography>
+            <Typography variant="h5">{account.firstName}  {account.lastName}</Typography>
             <Typography color="text.secondary" variant="body2">
-              {user.city} {user.country}
+              {account.phone} {account.phone}
             </Typography>
             <Typography color="text.secondary" variant="body2">
-              {user.timezone}
+              {account.userName}
             </Typography>
           </Stack>
         </Stack>

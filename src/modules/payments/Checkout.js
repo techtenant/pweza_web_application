@@ -54,15 +54,13 @@ ToggleCustomTheme.propTypes = {
   toggleCustomTheme: PropTypes.func.isRequired,
 };
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['Payment details', 'Review your order'];
 
 function getStepContent(step) {
-  switch (step) {
+  switch (step) {    
     case 0:
-      return <AddressForm />;
-    case 1:
       return <PaymentForm />;
-    case 2:
+    case 1:
       return <Review />;
     default:
       throw new Error('Unknown step');
@@ -123,7 +121,7 @@ export default function Checkout() {
             <Button
               startIcon={<ArrowBackRoundedIcon />}
               component="a"
-              href="/dashboard"
+              href="/pweza/payment"
               sx={{ ml: '-8px' }}
             >
               Back
@@ -179,7 +177,7 @@ export default function Checkout() {
               <Button
                 startIcon={<ArrowBackRoundedIcon />}
                 component="a"
-                href="/dashboard"
+                href="/pweza/dashboard"
                 sx={{ alignSelf: 'start' }}
               >
                 Back 
@@ -243,7 +241,7 @@ export default function Checkout() {
                   {activeStep >= 2 ? '$144.97' : '$134.98'}
                 </Typography>
               </div>
-              <InfoMobile totalPrice={activeStep >= 2 ? '$144.97' : '$134.98'} />
+              <InfoMobile totalPrice={activeStep >= 1 ? '$144.97' : '$134.98'} />
             </CardContent>
           </Card>
           <Box

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -16,9 +17,16 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { Card as MuiCard } from '@mui/material';
 import { ThemeProvider, createTheme, styled } from '@mui/material/styles';
-
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
+import { InputAdornment,IconButton } from '@mui/material';
+import { useMutation } from "@tanstack/react-query";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { ToastContainer , toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+import { postLogin } from "../../common/apis/account";
+import { setLocalStorage } from '../../common/utils/LocalStorage'
+
 
 import ForgotPassword from './ForgotPassword';
 import getSignInTheme from './getSignInTheme';
@@ -103,11 +111,13 @@ export default function SignIn() {
   const [showCustomTheme, setShowCustomTheme] = React.useState(true);
   const defaultTheme = createTheme({ palette: { mode } });
   const SignInTheme = createTheme(getSignInTheme(mode));
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+  const [userNameError, setUserNameError] = React.useState(false);
+  const [userNameErrorMessage, setUserNameErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const toggleColorMode = () => {
     setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -124,30 +134,69 @@ export default function SignIn() {
   const handleClose = () => {
     setOpen(false);
   };
+  const postMutation = useMutation({ mutationFn: postLogin });
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    event.preventDefault();   
+    
+    try {     
+      const data = new FormData(event.currentTarget);
+      const values = {
+        userName: data.get('userName'),
+        password: data.get('password'),
+        
+      }
+
+      postMutation.mutateAsync(values).then(response => {
+        // Extract role and other user details from login response
+        const userData = response.data;
+        console.log(response.data);
+        // Store user information in local storage
+        setLocalStorage('user', response.data);
+
+        if (userData.roles && userData.roles.includes("Rider")) {
+          window.location.href = '/pweza/riderdashboard'; 
+      } else {
+          window.location.href = '/pweza/dashboard'; 
+      }
+      
+    }).catch(error =>{
+      
+      toast.error(`An error occurred. Please try again later.${error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     });
-  };
+      } catch (error) {
+        toast.error(error.response.data, {
+          position: "top-right",
+          autoClose: 10000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    };
 
   const validateInputs = () => {
-    const email = document.getElementById('email');
+    const userName = document.getElementById('userName');
     const password = document.getElementById('password');
 
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+    if (!userName.value || userName.value.length < 1) {
+      setUserNameError(true);
+      setUserNameError('User Name is required.');
       isValid = false;
     } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
+      setUserNameError(false);
+      setUserNameErrorMessage('');
+    } 
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
@@ -161,9 +210,18 @@ export default function SignIn() {
     return isValid;
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+  
   return (
     <ThemeProvider theme={showCustomTheme ? SignInTheme : defaultTheme}>
       <CssBaseline />
+      <ToastContainer/>
       <SignInContainer direction="column" justifyContent="space-between">
         <Stack
           direction="row"
@@ -207,22 +265,19 @@ export default function SignIn() {
                 gap: 2,
               }}
             >
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
+            <FormControl>
+                <FormLabel htmlFor="userName">User Name</FormLabel>
                 <TextField
-                  error={emailError}
-                  helperText={emailErrorMessage}
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="your@email.com"
-                  autoComplete="email"
-                  autoFocus
+                  autoComplete="userName"
+                  name="userName"
                   required
                   fullWidth
-                  variant="outlined"
-                  color={emailError ? 'error' : 'primary'}
-                  sx={{ ariaLabel: 'email' }}
+                  id="userName"
+                  autoFocus
+                  placeholder="user12"
+                  error={userNameError}
+                  helperText={userNameErrorMessage}
+                  color={userNameError ? 'error' : 'primary'}
                 />
               </FormControl>
               <FormControl>
@@ -243,18 +298,31 @@ export default function SignIn() {
                   </Link>
                 </Box>
                 <TextField
-                  error={passwordError}
-                  helperText={passwordErrorMessage}
-                  name="password"
-                  placeholder="••••••"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  autoFocus
                   required
                   fullWidth
+                  name="password"
+                  placeholder="••••••"
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  autoComplete="new-password"
                   variant="outlined"
+                  error={passwordError}
+                  helperText={passwordErrorMessage}
                   color={passwordError ? 'error' : 'primary'}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </FormControl>
               <FormControlLabel
@@ -267,6 +335,7 @@ export default function SignIn() {
                 fullWidth
                 variant="contained"
                 onClick={validateInputs}
+                
               >
                 Sign in
               </Button>

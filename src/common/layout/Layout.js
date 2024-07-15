@@ -17,6 +17,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from '../../modules/dashboard/listItems';
 import AccountPopover from './account-popover';
+import Notifications from './notifications';
 
 
 
@@ -93,6 +94,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
       whiteSpace: 'nowrap',
       backgroundColor: '#121212', // Dark background color
       color: '#fff', // Text color for the items
+      height: '100vh',
       ...openedMixin(theme),
       ...(!open && {
         ...closedMixin(theme),
@@ -101,24 +103,45 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
 
 const defaultTheme = createTheme();
 
+
 function Layout({ children }) {
   const [open, setOpen] = React.useState(false);
-  const theme = useTheme();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notifications, setNotifications] = React.useState([
+    { id: 1, senderName: 'Jie Yan',  jobTitle: 'Remote React / React Native Developer', date: 'Jun 21', time: '09:12 AM', read: false },
+    { id: 2, senderName: 'Fran Perez',  jobTitle: 'Senior Golang Backend Engineer', date: 'Jun 17', time: '11:01 AM', read: true },
+    { id: 3, senderName: 'System',  jobTitle: 'Logistics management is now available', date: 'Jun 15', time: '09:15 AM', read: false },
+    // Add more notifications as needed
+  ]);
+
+  const handleClickNotifications = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseNotifications = () => {
+    setAnchorEl(null);
+  };
+
+  const markAsRead = (id) => {
+    const updatedNotifications = notifications.map((notif) =>
+      notif.id === id ? { ...notif, read: true } : notif
+    );
+    setNotifications(updatedNotifications);
+  };
 
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const unreadNotifications = notifications.filter((notif) => !notif.read);
+  const readNotifications = notifications.filter((notif) => notif.read);
+
+
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={defaultTheme}>
       <Grid sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={!open} sx={{
@@ -146,16 +169,21 @@ function Layout({ children }) {
           >
             <MenuIcon />
           </IconButton>
-          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '50px' }} />
-          <Typography
-            component="h1"
-            variant="h6"
-            noWrap
-            sx={{ flexGrow: 1, textAlign: 'center' }}
-          >
-            PWEZA
-          </Typography>
+          <img src="/PWEZA.svg" alt="PWEZA Logo" style={{ height: '70px' }} />
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton color="inherit" onClick={handleClickNotifications}>
+                <Badge badgeContent={unreadNotifications.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <Notifications
+                anchorEl={anchorEl}
+                onClose={handleCloseNotifications}
+                notifications={notifications}
+                markAsRead={markAsRead}
+              />
           <AccountPopover />
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={!open}>
@@ -167,7 +195,7 @@ function Layout({ children }) {
               px: [1],
             }}
           >
-            <IconButton onClick={toggleDrawer}>
+            <IconButton sx={{color: "#fff"}} onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
@@ -178,16 +206,16 @@ function Layout({ children }) {
             {secondaryListItems}
           </List>
         </Drawer>
-      
+       
         <Grid container spacing={3} sx={{ mt: 2, display: 'flex' ,flexGrow: 1, p: 3 }} >
           {children}
         </Grid>
-        
+     
       </Grid>
       <Box
         sx={{
 
-          marginTop: "auto",
+        
           p: 4,
         }}
       >
