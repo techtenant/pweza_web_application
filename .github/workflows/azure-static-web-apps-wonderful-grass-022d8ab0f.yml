@@ -17,6 +17,7 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force the use of Node20
       SKIP_PREFLIGHT_CHECK: true  # Skip preflight check
+      NODE_OPTIONS: --openssl-legacy-provider  # Enable legacy OpenSSL provider
 
     steps:
       - name: Checkout code
