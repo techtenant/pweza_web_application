@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'  # Updated to Node.js 20
+          node-version: '16.x'  # Make sure this matches your project's node version
 
       - name: Install dependencies
         run: npm install
@@ -32,8 +32,6 @@ jobs:
         run: npm run lint
 
       - name: Build the React app
-        env:
-          CI: false  # Temporarily set CI to false to bypass treating warnings as errors
         run: npm run build
 
       - name: Build And Deploy
