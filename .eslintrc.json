@@ -2,6 +2,7 @@
   "extends": "react-app",
   "rules": {
     "no-unused-vars": "off",
-    "react-hooks/exhaustive-deps": "off"
+    "react-hooks/exhaustive-deps": "off",
+    "no-mixed-operators": "off"
   }
 }
