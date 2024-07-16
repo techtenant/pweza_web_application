@@ -14,6 +14,8 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force the use of Node20
 
     steps:
       - name: Checkout code
@@ -28,7 +30,7 @@ jobs:
           node-version: '20.x'  # Updated to use Node.js 20
 
       - name: Install dependencies
-        run: npm ci  # Use npm ci to install dependencies based on package-lock.json
+        run: npm install  # Use npm install to synchronize dependencies
 
       - name: Lint the code
         run: npm run lint || true  # Run lint but do not fail the build
