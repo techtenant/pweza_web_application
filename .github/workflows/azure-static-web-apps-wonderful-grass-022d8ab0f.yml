@@ -14,11 +14,10 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force the use of Node20
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
@@ -29,7 +28,7 @@ jobs:
           node-version: '20.x'  # Updated to use Node.js 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci  # Use npm ci to install dependencies based on package-lock.json
 
       - name: Lint the code
         run: npm run lint || true  # Run lint but do not fail the build
@@ -37,8 +36,7 @@ jobs:
       - name: Build the React app
         run: npm run build
 
-      - name: Build And Deploy
-        id: builddeploy
+      - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_GRASS_022D8AB0F }}
@@ -57,7 +55,6 @@ jobs:
     name: Close Pull Request Job
     steps:
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_GRASS_022D8AB0F }}
