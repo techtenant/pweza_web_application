@@ -17,7 +17,6 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Force the use of Node20
       SKIP_PREFLIGHT_CHECK: true  # Skip preflight check
-      
 
     steps:
       - name: Checkout code
@@ -44,6 +43,11 @@ jobs:
 
       - name: Build the React app
         run: npm run build
+
+      - name: List build directory contents
+        run: |
+          echo "Contents of build directory:"
+          ls -la build
 
       - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
